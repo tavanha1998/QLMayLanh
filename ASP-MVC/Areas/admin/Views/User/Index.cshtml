@@ -1,0 +1,306 @@
+﻿@model IEnumerable<ASP_MVC.EF.NhanVien>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="~/Assets/Admin/js/controllers/UserController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Kỹ thuật viên</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    @Html.ActionLink("+ Thêm mới", "Create", null, new { @class = "btn btn-success btn-sm" })
+                </h6>
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>STT</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên nhập</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Tên KTV</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>SDT</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Loại KTV</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Tình trạng</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên đăng nhập</th>
+                            <th>Tên KTV</th>
+                            <th>Số điện thoại</th>
+                            <th>Loại</th>
+                            <th>Tình trạng</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            var i = 0;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr class="updateUser" data-id="@item.ID" id="row_@item.ID">
+                                <td id="id">@item.ID</td>
+                                <td>@item.Username</td>
+                                <td id="@item.ID"><input type="text" id="tenktv_@item.ID" class="form-control" value="@item.TenKTV" hidden /><div id="tktv_@item.ID">@item.TenKTV</div></td>
+                                @*<td>@item.SDT</td>*@
+                                <td><input type="text" id="sdt_@item.ID" maxlength="11" class="form-control" value="@item.SDT" hidden /><div id="dt_@item.ID">@item.SDT</div></td>
+                                <td>
+                                    @if(item.Loai==0)
+                                    { <div id="lnv_@item.ID">Admin</div> }
+                                    else if(item.Loai==1)
+                                    { <div id="lnv_@item.ID">QL kho</div>}
+                                    else if(item.Loai==2)
+                                    { <div id="lnv_@item.ID">QL nhập liệu</div>}
+                                    else { <div id="lnv_@item.ID">KTV</div>}
+                                    <select class="form-control" id="loai_@item.ID" hidden>
+                                        @if (item.Loai == 0)
+                                        {
+                                            <option value="0" selected>Admin</option>
+                                            <option value="1">QL kho</option>
+                                            <option value="2">QL nhập liệu</option>
+                                            <option value="3">KTV</option>
+                                        }
+                                        else if (item.Loai == 1)
+                                        {
+                                            <option value="0">Admin</option>
+                                            <option value="1" selected>QL kho</option>
+                                            <option value="2">QL nhập liệu</option>
+                                            <option value="3">KTV</option>
+                                        }
+                                        else if (item.Loai == 2)
+                                        {
+                                            <option value="0">Admin</option>
+                                            <option value="1">QL kho</option>
+                                            <option value="2" selected>QL nhập liệu</option>
+                                            <option value="3">KTV</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="0">Admin</option>
+                                            <option value="1">QL kho</option>
+                                            <option value="2">QL nhập liệu</option>
+                                            <option value="3" selected>KTV</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    @if(item.Status==1)
+                                    { <div id="sta_@item.ID">Hoạt động</div>}
+                                    else { <div id="sta_@item.ID">Khóa</div>}
+                                    <select class="form-control" id="status_@item.ID" hidden>
+                                        @if (item.Status == 1)
+                                        {
+                                            <option value="1" selected>Hoạt động</option>
+                                            <option value="0">Khóa</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="1">Hoạt động</option>
+                                            <option value="0" selected>Khóa</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="button" data-toggle="modal" data-target=".DiemKTV" data-idnv="@item.ID" class="btn btn-success XemDiem btn-sm" title="Xem điểm" style="color:white"><i class="fas fa-eye"></i></button>
+                                    <button type="button" data-toggle="modal" data-target=".dsDungCu" data-idnv="@item.ID" class="btn btn-primary dsDC btn-sm" title="Dụng cụ đang mượn" style="color:white"><i class="fas fa-tools"></i></button>
+                                    @*@Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.ID }, new { @class = "btn btn-info", @style = "color:white" })*@
+                                    <button type="button" data-idnv="@item.ID" title="Chỉnh sửa" class="btn btn-info btnEditNV btn-sm" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                    <a class="btn btn-danger Reset btn-sm" data-toggle="modal" data-target=".Option" data-id="@item.ID" title="Reset" href="#">R</a>
+                                </td>
+                                @*<td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn"><i class="fas fa-times"></i></a></td>*@
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade Option">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button type="button" class="btn btn-success rsPass" data-dismiss="modal" style="color:white" title="Đặt lại mật khẩu mặc định">Reset Password</button>
+                    <button type="button" class="btn btn-danger rsAll" data-dismiss="modal" style="color:white;width:150px" title="Đặt lại mật khẩu và điểm KTV">Reset All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade DiemKTV">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Bảng điểm </h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                            <thead>
+                                <tr>
+                                    <th>Tháng</th>
+                                    <th>Tổng điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody class="abc" id="table_body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr id="rowktv_{{ID}}">
+        <td>{{Thang}}</td>
+        <td>{{Diem}}</td>
+    </tr>
+</script>
+
+<div class="modal fade dsDungCu ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Các dụng cụ đang mượn</h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên dụng cụ</th>
+                                        <th>Ngày mượn</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_bodydc"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-templatedc" type="x-tmpl-mustache">
+    <tr>
+        <td>{{TenVatDung}}</td>
+        <td>
+            {{NgayXuat}}
+        </td>
+        <td>{{GhiChu}}</td>
+    </tr>
+</script>
+
+<!-- /.container-fluid -->
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa KTV?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

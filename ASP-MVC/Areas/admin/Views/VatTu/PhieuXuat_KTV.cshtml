@@ -1,0 +1,162 @@
+﻿@model PagedList.IPagedList<ASP_MVC.EF.PhieuXuatVatTu_KTV>
+@using PagedList.Mvc
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/PhieuXuat_KTV.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+<!-- Begin Page Content -->
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Quản lý phiếu xuất vật tư - KTV</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @Html.ActionLink("+ Lập phiếu", "CreatePhieuXuat_KTV", null, new { @class = "btn btn-success btn-sm" })
+                @Html.ActionLink("Trở về", "Index", "VatTu", new { @class = "btn btn-primary btn-sm" })
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Mã phiếu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên KTV</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Yêu cầu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Ngày xuất</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Ghi chú</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Kiểm duyệt</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable" style="display: block; white-space: nowrap" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu</th>
+                            <th>Tên KTV</th>
+                            <th>Yêu cầu của khách</th>
+                            <th>Ngày xuất</th>
+                            <th>Ghi chú</th>
+                            <th>Kiểm duyệt</th>
+                            <th></th>
+                            @if (ViewBag.QLNL == null)
+                            {
+                                <th></th>
+}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" class="updateVatTu" data-id="@item.ID">
+                                <td>@item.ID</td>
+                                <td>@item.NhanVien.TenKTV</td>
+                                <td>@item.YeuCauPhucVu.KhachHang.HoTen - @item.YeuCauPhucVu.NgayLap.Value.ToString("dd/MM/yyyy")</td>
+                                <td>@item.NgayXuat.Value.ToString("dd/MM/yyyy")</td>
+
+                                <td><input type="text" size="25" id="ghichu_@item.ID" class="form-control updatePN" data-id="@item.ID" value="@item.GhiChu" hidden /><div id="gc_@item.ID">@item.GhiChu</div></td>
+                                @if (item.KiemDuyet == true)
+                                {
+                                    <td style="color:blue">Đã xác nhận</td>
+                                }
+                                else
+                                {
+                                    <td style="color:red">Đang chờ</td>
+                                }
+                                <td>
+                                    <a href="@Url.Action("CTPhieuXuat_KTV", "VatTu", new { idphieuxuat = item.ID })" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Chi tiết phiếu xuất"><i class="fas fa-clipboard-list"></i></a>
+                                    <button title="Chỉnh sửa" type="button" data-id="@item.ID" class="btn btn-info btnEditPX btn-sm" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                    <a href="@Url.Action("DownloadExcel_PhieuXuatKTV", "VatTu", new { id = item.ID })" class="btn btn-success btn-sm" data-toggle="tooltip" title="Export"><i class="fas fa-download"></i></a>
+
+                                </td>
+                                @if (ViewBag.QLNL == null)
+                                {
+                                    <td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></a></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-danger">Xác nhận xóa phiếu (bao gồm tất cả chi tiết bên trong phiếu)? </h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

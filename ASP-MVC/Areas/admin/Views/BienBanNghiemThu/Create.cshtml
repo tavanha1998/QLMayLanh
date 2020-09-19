@@ -1,0 +1,226 @@
+﻿@model ASP_MVC.EF.CTBienBanNghiemThu
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var dsMay = (List<ASP_MVC.EF.MayLanh>)ViewBag.DSMayPhucVu;
+    long idkh = ViewBag.IDKH;
+    long idyc = ViewBag.IDYC;
+    long idbbnt = ViewBag.IDBBNT;
+    var dsdv = (IEnumerable<SelectListItem>)ViewBag.DVSP;
+    var kh = (ASP_MVC.EF.KhachHang)ViewBag.KH;
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@section JsFooter
+{
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/BienBanNghiemThuController.js"></script>
+}
+<h2>Lập biên bản nghiệm thu (@kh.HoTen - @kh.SDT)</h2>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+            </div>
+            <div class="panel-body">
+                @*<div class="row">
+                    <div class="col-lg-6">*@
+                <div class="form-horizontal">
+                    <hr />
+                    <div>
+                        <div class="form-group" style="float:left">
+                            <div class="col-md-12">
+                                <div style="float:left;width:450px" class="getIDYC" data-id="@idyc">
+                                    @Html.TextBox("txtDV", null, new { @class = "form-control", @autocomplete = "off", @list = "dataDV", id = "txtDV", placeholder = "Mã - tên dịch vụ" })
+                                    @Html.EditorFor(model => model.IDDichVu, new { htmlAttributes = new { @class = "form-control", @id = "iddv", hidden = "true" } })
+
+                                    <datalist id="dataDV">
+                                        @if (dsdv.Count() > 0)
+                                        {
+                                            foreach (SelectListItem item in dsdv)
+                                            {
+                                                <option value="@item.Text"></option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option>Không có dữ liệu</option>
+                                        }
+
+                                    </datalist>
+
+                                </div>
+                                @*<a data-toggle="modal" data-target=".dichvu" class="btn btn-info" style="color:white; margin-left: 25px">Danh sách dịch vụ/sản phẩm</a>*@
+                                @Html.ValidationMessageFor(model => model.IDDichVu, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="float:left">
+                            <div class="col-md-10">
+                                <div style="float:left;width:200px">@Html.TextBox("txtDonGia", null, new { @class = "form-control", @id = "dongia", @type = "number", placeholder = "Đơn giá" })</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="float:left">
+                            <div class="col-md-10">
+                                <div style="float:left;width:100px">@Html.TextBox("txtDiem", null, new { @class = "form-control", @id = "diem", @type = "number", placeholder = "Điểm" })</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="float:left">
+                            <div class="col-md-10">
+                                <div style="float:left;width:150px">@Html.TextBox("txtSoluong", null, new { @class = "form-control", @id = "soluong", @type = "number", placeholder = "Số lượng" })</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="float:left">
+                            @Html.LabelFor(model => model.MayLanh, "Máy lạnh", htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-12">
+                                <div style="float:left; width:200px" class="layidKH" data-id="@kh.ID" data-idyc="@idyc">
+                                    @Html.TextBox("txtMay", null, new { @class = "form-control", id = "txtMay", type = "email", @multiple = "true", @list = "dataMay", placeholder = "Mã máy", @autocomplete = "off" })
+
+                                    <datalist id="dataMay">
+                                        @if (dsMay.Count() > 0)
+                                        {
+                                            <option value="ALL">ALL (@dsMay.Count())</option>
+                                            foreach (ASP_MVC.EF.MayLanh item in dsMay)
+                                            {
+                                                <option value="@item.Ma"> @item.ViTri @item.TenMay</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option>Không có dữ liệu</option>
+                                        }
+
+                                    </datalist>
+                                </div>
+                                @Html.EditorFor(model => model.MayLanh, new { htmlAttributes = new { @class = "form-control", @id = "maypv", hidden = "true" } })
+                                @*<a data-toggle="modal" data-target=".abc" class="btn btn-info" style="color:white; margin-left: 25px">Danh sách máy</a>*@
+                                @Html.ValidationMessageFor(model => model.MayLanh, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="float:left">
+                            @Html.LabelFor(model => model.CPDauVao, "Giá đầu vào", htmlAttributes: new { @class = "control-label col-md-8" })
+                            <div class="col-md-10">
+                                <div style="float:left;width:200px">@Html.TextBoxFor(model => model.CPDauVao, new { @class = "form-control", @id = "CPDauVao", type="number", placeholder = "Giá đầu vào" })</div>
+                                @Html.ValidationMessageFor(model => model.CPDauVao, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="float:left">
+                            @Html.LabelFor(model => model.GhiChu, "Ghi chú", htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-10">
+                                <div style="float:left;width:200px">@Html.TextAreaFor(model => model.GhiChu, new { @class = "form-control", @id = "ghichu" })</div>
+                                @Html.ValidationMessageFor(model => model.GhiChu, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group" style="clear:both">
+
+                        <div style="float:left;margin-left:15px">
+                            <a style="color:white;width:200px" class="btn btn-success TaoCT" data-idkh="@idkh" data-idyc="@idyc">Tạo chi tiết BBNT</a>
+                            <a data-toggle="modal" data-target=".themDVSP" style="color:white;width:150px" class="btn btn-danger addDVSP">+ Dịch vụ mới</a>
+                            @Html.ActionLink("Trở về", "Index", "BienBanNghiemThu", new { stt = idyc, kh = idkh }, new { @class = "btn btn-primary" })
+                        </div>
+                        <div style="float:right">
+                            <a @*data-toggle="modal" data-target=".hoanthanh"*@ data-idyc="@idyc" data-idkh="@idkh" data-idbbnt="@idbbnt" style="color:white;width:200px" class="btn btn-info Opendialog">Hoàn thành BBNT</a>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="clear:both">
+
+                    </div>
+                </div>
+            </div>
+            @*</div>
+                </div>*@
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="modal fade themDVSP">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Thêm dịch vụ mới</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <p><input class="form-control" id="madv" type="number" placeholder="Mã dịch vụ" /></p>
+                    <p><input class="form-control" id="tendv" type="text" placeholder="Tên dịch vụ" /></p>
+                    <p>
+                        <select class="form-control" id="loaidv">
+                            <option value="true" selected>Dịch vụ</option>
+                            <option value="false">Sản phẩm</option>
+                        </select>
+                    </p>
+                    <p><input class="form-control" id="dongiadv" type="number" placeholder="Đơn giá" /></p>
+                    <p><input class="form-control" id="diemdv" type="number" placeholder="Điểm" /></p>
+                    <button data-dismiss="modal" class="btn btn-primary themdv"><span>Xác nhận</span></button>
+                    <button data-dismiss="modal" class="btn btn-danger"><span>Đóng</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*width:1100-800*@
+
+<div class="modal fade hoanthanh" id="modalNgayLamTiep">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Vui lòng nhập ngày làm tiếp</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <input id="ngaylamtiep" type="text" value="@DateTime.Now.AddDays(1).ToString("dd/MM/yyyy")" />
+                    <button data-dismiss="modal" class="btn btn-primary xacnhan"><span>Xác nhận</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div class="table-responsive" style="float:left;width:1100px">
+        <table class="table table-hover table-bordered table-sm" id="dataTable" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Mã dịch vụ</th>
+                    <th>Tên dịch vụ/sản phẩm</th>
+                    <th>Đơn giá</th>
+                    <th>Điểm</th>
+                    <th>Số lượng</th>
+                    <th>Máy lạnh</th>
+                    <th>Giá đầu vào</th>
+                    <th>Ghi chú</th>
+                    <th></th>
+                </tr>
+            </thead>
+            @*<tfoot>
+                    <tr>
+                        <th>Tài khoản</th>
+                        <th>Họ tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Tùy chỉnh</th>
+                    </tr>
+                </tfoot>*@
+            <tbody id="tableCT">
+            </tbody>
+        </table>
+    </div>
+</div>

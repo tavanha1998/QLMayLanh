@@ -1,0 +1,74 @@
+﻿
+@{
+    var ktv = (ASP_MVC.EF.NhanVien)ViewBag.NV;
+    var diemtn = ViewBag.diemtn;
+    var diemtr = ViewBag.diemtr;
+}
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    <div class="input-group" style="width:950px">
+        <input type="text" name="lastMonth" class="form-control bg-light border-0 small" value="@(DateTime.Now.Month - 1)" hidden />
+        <div style="margin-right:100px">
+            <button class="btn btn-primary" type="submit">
+                BBNT tháng trước
+            </button>
+            <a class="btn btn-light" title="Tổng điểm tháng trước">&nbsp;Tổng điểm: @diemtr</a>
+        </div>
+
+        <div>
+            @Html.ActionLink("BBNT tháng này", "Index", null, new { @class = "btn btn-danger " })
+        </div>
+        <a class="btn btn-light" title="Tổng điểm tháng này">&nbsp;Tổng điểm: @diemtn</a>
+        <a class="btn btn-success dsDC" data-toggle="modal" data-target=".dsDungCu" data-id="@ktv.ID"  style="color:white;margin-left:100px" title="Dụng cụ đang mượn">Dụng cụ đang mượn</a>
+    </div>
+}
+
+<div class="modal fade dsDungCu ">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Các dụng cụ đang mượn</h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên dụng cụ</th>
+                                        <th>Ngày mượn</th>
+                                        <th>Ngày trả</th>
+                                        <th>Ghi chú</th>
+                                        <th>Tình trạng</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr>
+        <td>{{TenVatDung}}</td>
+        <td>
+            {{NgayXuat}}
+        </td>
+        <td>
+            {{NgayTra}}
+        </td>
+        <td>{{GhiChu}}</td>
+        <td>{{TinhTrang}}</td>
+    </tr>
+</script>

@@ -1,0 +1,216 @@
+﻿@model IEnumerable<ASP_MVC.EF.MayLanh>
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/MayChoThueController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+    @*<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+}
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<div>
+    @using (Html.BeginForm("Import", "MayChoThue", FormMethod.Post, new { style = "float:right; margin-right:25px", enctype = "multipart/form-data" }))
+    {
+        @Html.Raw(ViewBag.Error)
+        <input type="submit" value="Import" class="btn btn-primary" style="float:right" />
+        <input type="file" name="UploadedFile" />
+    }
+</div>
+<hr />
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Máy cho thuê</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                @Html.ActionLink("+ Thêm mới", "Create", null, new { @class = "btn btn-success btn-sm", @style = "width:120px;" })
+
+                <div class="btn-group btn-group-sm" style="float:right">
+                    <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-cog"> Hiển thị</i>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                                <label>Mã máy</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                                <label>Tên máy</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                                <label>Model - Nhãn hiệu</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                                <label>Công suất</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                                <label>Ngày mua</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                                <label>Mã DV</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox7" class="form-check-input" checked />
+                                <label>Ghi chú</label>
+                            </span>
+                        </li>
+                        <li class="dropdown-item">
+                            <span>
+                                <input type="checkbox" id="checkbox8" class="form-check-input" checked />
+                                <label>Tình trạng</label>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" style="display:block; white-space:nowrap" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã máy</th>
+                            <th>Tên máy</th>
+                            <th>Model - Nhãn hiệu</th>
+                            <th>Công suất</th>
+                            <th>Ngày mua</th>
+                            <th>Mã dịch vụ</th>
+                            <th>Ghi chú</th>
+                            <th>Tình trạng</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr id="row_@item.ID" class="updateMCT" data-id="@item.ID">
+                            <td>@item.Ma</td>
+                            <td><input size="20" type="text" id="tenmay_@item.ID" class="form-control" value="@item.TenMay" hidden /><div id="tm_@item.ID">@item.TenMay</div></td>
+                            <td><input type="text" id="model_@item.ID" class="form-control" value="@item.Model" hidden /><div id="md_@item.ID">@item.Model</div></td>
+                            <td><input type="text" id="congsuat_@item.ID" class="form-control" value="@item.CongSuat" hidden /><div id="cs_@item.ID">@item.CongSuat</div></td>
+                            <td><input type="text" id="ngaymua_@item.ID" class="form-control" value="@(item.NgayMua.HasValue? item.NgayMua.Value.ToString("dd/MM/yyyy"):"")" hidden /><div id="nm_@item.ID">@(item.NgayMua.HasValue ? item.NgayMua.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                            <td><input size="15" type="text" id="iddichvu_@item.ID" class="form-control" value="@item.IDDichVu" hidden /><div id="iddv_@item.ID">@item.IDDichVu</div></td>
+                            <td><input type="text" size="15" id="ghichu_@item.ID" class="form-control" value="@item.GhiChu" hidden /><div id="gc_@item.ID">@item.GhiChu</div></td>
+                            <td>
+                                @if (item.Status.Value == 0)
+                                {
+                                <div id="sta_@item.ID">Đang sửa</div>
+                            }
+                            else if (item.Status.Value == 1)
+                            {
+                                <div id="sta_@item.ID">Có sẵn</div>
+                            }
+                            else
+                            {
+                                <div id="sta_@item.ID">Đang thuê</div>
+                            }
+                                <select class="form-control" id="status_@item.ID" hidden>
+                                    @if (item.Status.Value == 1)
+                                    {
+                                        <option value="1" selected>Có sẵn</option>
+                                        <option value="0">Đang sửa</option>
+                                        <option value="2">Đang thuê</option>
+                                    }
+                                    else if (item.Status.Value == 0)
+                                    {
+                                        <option value="1">Có sẵn</option>
+                                        <option value="0" selected>Đang sửa</option>
+                                        <option value="2">Đang thuê</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="1">Có sẵn</option>
+                                        <option value="0">Đang sửa</option>
+                                        <option value="2" selected>Đang thuê</option>
+                                    }
+                                </select>
+                                </td>
+                                <td>
+                                    <button type="button" data-toggle="tooltip" title="Lịch sử sửa chữa" data-idmay="@item.ID" class="btn btn-sm btn-primary btnXemLichSu" style="color:white"><i class="fas fa-wrench"></i></button>
+                                    <button type="button" data-toggle="tooltip" title="Lịch sử cho thuê" data-idmay="@item.ID" class="btn btn-sm btn-warning btnLichSuThue" style="color:white"><i class="fas fa-list-alt"></i></button>
+                                    <button type="button" data-toggle="tooltip" title="Chỉnh sửa" data-idmaychothue="@item.ID" class="btn btn-sm btn-info btnEditMayChoThue" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                </td>
+                                @if (ViewBag.QLNL == true)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></a></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @*<div style="float:right">@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.search }))</div>*@
+        </div>
+    </div>
+    @Html.Raw(TempData["msg"])
+</div>
+<!-- /.container-fluid -->
+
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa máy?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

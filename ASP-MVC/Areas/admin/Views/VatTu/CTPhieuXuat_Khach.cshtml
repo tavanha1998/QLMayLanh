@@ -1,0 +1,96 @@
+﻿@model IEnumerable<ASP_MVC.EF.CTPhieuXuatVatTu_Khach>
+
+@{
+    ViewBag.Title = "CTPhieuXuat_Khach";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var idphieu = ViewBag.idphieu;
+    var ngayxuat = ViewBag.NgayXuat;
+    var kh = ViewBag.KH;
+}
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/PhieuXuat_Khach.js"></script>
+}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Phiếu xuất @idphieu - Ngày xuất: @ngayxuat - Khách: @kh </h1>
+    <div class="idpx" hidden="hidden">@idphieu</div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @*@Html.ActionLink("+ Thêm vật dụng", "Create", null, new { @class = "btn btn-success " })*@
+                @*@if (statuspx == 0)
+                    {
+                        <input type="button" value="+ Thêm vật dụng" id="btnadd" class="btn btn-success btnAddVatDung" />
+                    }*@
+                @Html.ActionLink("Trở về", "PhieuXuat_Khach", "VatTu", new { @class = "btn btn-primary" })
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tên vật tư</th>
+                            <th>Đơn vị</th>
+                            <th>Số lượng</th>
+                            <th>Giá bán</th>
+                            <th>Thành tiền</th>
+                            @if (ViewBag.QLNL == null)
+                            {
+                                <th></th>
+                            }
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr id="row_@item.ID" class="updateKho" data-id="@item.IDPX_Khach">
+                            <td>@item.VatTu.TenVatTu</td>
+                            <td>@item.VatTu.DonVi</td>
+                            <td>@item.SoLuong</td>
+                            <td>@item.DonGia.Value.ToString("N0")</td>
+                            <td>@((item.SoLuong * item.DonGia).Value.ToString("N0"))</td>
+                            @if (ViewBag.QLNL == null)
+                            {
+                                <td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="OpendialogCT btn"><i class="fas fa-times"></i></a></td>
+                            }
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa chi tiết?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary XoaCT"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

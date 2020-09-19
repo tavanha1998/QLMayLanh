@@ -1,0 +1,14 @@
+﻿@model List<ASP_MVC.EF.KhachHang>
+
+@using (Html.BeginForm("Index", "KhachHang", FormMethod.Get))
+{
+    <div class="input-group">
+        <input type="text" name="searchString" class="form-control bg-light border-0 small" placeholder="Nhập SĐT/Tên khách hàng..." aria-label="Search" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search fa-sm"></i>
+            </button>
+        </div>
+    </div>
+}
+  

@@ -1,0 +1,45 @@
+﻿@media only screen and (max-width: 768px) {
+    #responsive1 {
+        width: 200px;
+    }
+    .responsive2 {
+        width: 250px;
+    }
+    .responsive3 {
+        float: left;
+        width: 250px
+    }
+    .responsive4 {
+        float: left;
+        width: 250px
+    }
+    .responsive5 {
+        width: 250px
+    }
+}
+
+@media only screen and (min-width: 769px) {
+    #responsive1 {
+        float: right;
+        width: 300px
+    }
+    .responsive2 {
+        float: left;
+        width: 400px
+    }
+    .responsive3 {
+        padding-left: 10px;
+        float: left;
+        width: 250px
+    }
+    .responsive4 {
+        padding-left: 10px;
+        float: left;
+        width: 150px
+    }
+
+    .responsive5 {
+        float: left;
+        width: 250px
+    }
+}

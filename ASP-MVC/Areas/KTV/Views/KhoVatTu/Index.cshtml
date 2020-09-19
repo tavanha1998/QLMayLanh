@@ -1,0 +1,241 @@
+﻿@model PagedList.IPagedList<ASP_MVC.EF.PhieuXuatVatTu_KTV>
+@using PagedList.Mvc
+    
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<link href="~/Assets/MyCss/responsive.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/KTV/Views/Shared/_Layout.cshtml";
+    var selectycpv = (IEnumerable<SelectListItem>)ViewBag.selectlistycpv;
+    var selectvt = (IEnumerable<SelectListItem>)ViewBag.selectlist;
+}
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/KTV.js"></script>
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/KTV_XuatVatTu.js"></script>
+}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Phiếu xuất vật tư</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                <a class="btn btn-primary" href="#" data-toggle="modal" data-target=".LapPhieu">+ Lập phiếu xuất</a>
+            </div>
+            @using (Html.BeginForm("Index", "KhoVatTu", FormMethod.Get))
+            {
+                <div id="responsive1" >
+                    <input class="form-control col-md-9" style="float:left" name="searchString" placeholder="Mã phiếu/Ngày xuất" />
+                    <button style="margin-left:5px" class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                </div>
+            }
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu</th>
+                            <th>Tên KTV</th>
+                            <th>Yêu cầu của khách</th>
+                            <th>Ngày xuất</th>
+                            <th>Ghi chú</th>
+                            <th>Kiểm duyệt</th>
+                            <th></th>
+                            @*<th></th>*@
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" class="updateVatTu" data-id="@item.ID">
+                                <td>@item.ID</td>
+                                <td>@item.NhanVien.TenKTV</td>
+                                <td>@item.YeuCauPhucVu.KhachHang.HoTen - @item.YeuCauPhucVu.NgayLap.Value.ToString("dd/MM/yyyy")</td>
+                                <td>@item.NgayXuat.Value.ToString("dd/MM/yyyy")</td>
+
+                                <td>@item.GhiChu</td>
+                                @if (item.KiemDuyet == true)
+                                {
+                                    <td>Đã xác nhận</td>
+                                }
+                                else
+                                {
+                                    <td>Đang chờ</td>
+                                }
+                                <td>
+                                    <a class="btn btn-success XemCT" href="#" data-toggle="modal" data-id="@item.ID" data-target=".CTPhieu" title="Xem chi tiết"><i class="fas fa-list"></i></a>
+
+                                </td>
+                                @*<td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn"><i class="fas fa-times"></i></a></td>*@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div style="float:right">@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.search }))</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade LapPhieu">
+    <div class="modal-dialog modal-lg ">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Lập phiếu xuất vật tư</h4>
+
+
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+
+                    <div class="card-body">
+                        <p class="text-primary"><b>Thông tin phiếu: </b></p>
+                        <div class="form-group responsive2" >
+                            <div class="col-md-15">
+                                <input class="form-control" list="dataycpv" placeholder="Chọn yêu cầu" autocomplete="off" id="IDYCPV"></input>
+                                <datalist id="dataycpv">
+                                    @if (selectycpv.Count() > 0)
+                                    {
+                                        foreach (SelectListItem item in selectycpv)
+                                        {
+                                            <option value="@item.Value. @item.Text" data-value="@item.Value"></option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option>Không có dữ liệu</option>
+                                    }
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="form-group responsive3">
+                            <div class="col-md-15">
+                                <input type="text" class="form-control" placeholder="Ghi chú cho phiếu..." autocomplete="off" id="ghichu"></input>
+                            </div>
+                        </div>
+                        <p style="clear:both"></p>
+                        <hr />
+                        <p class="text-primary"><b>Thông tin chi tiết: </b></p>
+                        <div class="form-group responsive5">
+                            <div class="col-md-15">
+                                <input class="form-control" list="datavt" placeholder="Chọn vật tư" autocomplete="off" id="IDVatTu"></input>
+                                <datalist id="datavt">
+                                    @if (selectvt.Count() > 0)
+                                    {
+                                        foreach (SelectListItem item in selectvt)
+                                        {
+                                            <option value="@item.Value. @item.Text" data-value="@item.Value"></option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option>Không có dữ liệu</option>
+                                    }
+
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="form-group responsive4">
+                            <div class="col-md-15">
+                                @Html.TextBox("SoLuong", null, new { @class = "form-control", @type = "number", @placeholder = "Số lượng", @id = "valsoluong" })
+                            </div>
+                        </div>
+
+                        <div class="form-group responsive3">
+                            <div class="col-md-15">
+                                @Html.TextBox("DonGia", null, new { @class = "form-control", @type = "number", @placeholder = "Giá bán", @id = "valdongia" })
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-primary TaoCT" href="#" style="float:left">Thêm chi tiết</a>
+                        </div>
+                        <p style="clear:both"></p>
+                        <hr />
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered table-sm" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Mã vật tư</th>
+                                        <th>Tên vật tư</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn vị</th>
+                                        <th>Đơn giá</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableCT"></tbody>
+                            </table>
+                        </div>
+                        <div style="float:right"><a style="color:white;width:120px" class="btn btn-danger LapPhieuXuat">Lập phiếu</a></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade CTPhieu">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Chi tiết phiếu xuất</h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên vật tư</th>
+                                        <th>Slg lấy</th>
+                                        <th>Slg trả</th>
+                                        <th>Slg thực tế</th>
+                                        <th>Đơn vị</th>
+                                        <th>Giá bán</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body3"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template3" type="x-tmpl-mustache">
+    <tr>
+        <td>{{TenVatTu}}</td>
+        <td>{{SLLay}}</td>
+        <td>{{SLTra}}</td>
+        <td>{{SLThucTe}}</td>
+        <td>{{DonVi}}</td>
+        <td>{{GiaBan}}</td>
+        <td>{{ThanhTien}}</td>
+    </tr>
+</script>

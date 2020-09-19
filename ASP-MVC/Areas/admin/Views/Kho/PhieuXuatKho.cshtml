@@ -1,0 +1,139 @@
+﻿@model IEnumerable<ASP_MVC.EF.PhieuXuatKho>
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "PhieuXuatKho";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    @*<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <script src="~/Assets/Admin/js/controllers/PhieuXuatKhoController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<!-- Begin Page Content -->
+<hr />
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Quản lý xuất dụng cụ</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @Html.ActionLink("+ Lập phiếu xuất", "CreatePhieuXuatKho", null, new { @class = "btn btn-success btn-sm" })
+                @Html.ActionLink("Trở về", "Index", "Kho", new { @class = "btn btn-primary btn-sm" })
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Mã phiếu xuất</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên KTV</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Ngày xuất</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Ngày trả</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Kiểm duyệt</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Tình trạng</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" width="100%" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu xuất</th>
+                            <th>Tên KTV</th>
+                            <th>Ngày xuất</th>
+                            <th>Ngày trả</th>
+                            <th>Kiểm duyệt</th>
+                            <th>Tình trạng</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" data-id="@item.ID">
+                                <td>@item.ID</td>
+                                <td><input type="text" size="25" id="tennv_@item.ID" data-id="@item.ID" data-idnv="@item.IDKTV" class="form-control updatePX" value="@item.NhanVien.TenKTV" disabled /><input id="valKTV_@item.ID" hidden value="@item.IDKTV" /></td>
+                                <td>@item.NgayXuat.Value.ToString("HH:mm, dd/MM/yyyy")</td>
+                                <td>
+                                    @(item.NgayTra.HasValue ? item.NgayTra.Value.ToString("HH:mm, dd/MM/yyyy") : "null")
+                                </td>
+                                @if (item.KiemDuyet == true)
+                                {
+                                    <td>Đã xác nhận</td>
+                                }
+                                else
+                                {
+                                    <td>Đang chờ</td>
+                                }
+                                @if (item.Status == 1)
+                                {
+                                    <td align="center"><button title="Đã trả" data-idpx="@item.ID" class="btn btn-success btnStatus btn-sm" id="btn_@item.ID" data-status="@item.Status"><i id="icontinhtrang_@item.ID" class="fas fa-check-square"></i></button></td>
+                                }
+
+                                else
+                                {
+                                    <td align="center"><button data-idpx="@item.ID" title="Chưa trả" class="btn btn-danger btnStatus btn-sm" data-status="@item.Status"><i id="icontinhtrang_@item.ID" class="fas fa-minus-square"></i></button></td>
+                                }
+                                <td align="center">
+                                    <a href="@Url.Action("CTPhieuXuatKho", "Kho", new { idphieuxuat = item.ID })" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Chi tiết phiếu xuất"><i class="fas fa-clipboard-list"></i></a>
+                                    <button title="Chỉnh sửa" type="button" data-id="@item.ID" data-status="@item.Status" class="btn btn-info btn-sm btnEditPhieuXuat" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                    <a href="@Url.Action("DownloadExcel", "Kho", new { id = item.ID })" class="btn btn-success btn-sm" data-toggle="tooltip" title="Export"><i class="fas fa-download"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->

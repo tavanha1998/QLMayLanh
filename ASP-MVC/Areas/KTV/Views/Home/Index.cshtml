@@ -1,0 +1,74 @@
+﻿@model IEnumerable<ASP_MVC.EF.CTBienBanNghiemThu>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/KTV/Views/Shared/_Layout.cshtml";
+    var bbnt = (List<ASP_MVC.EF.BienBanNghiemThu>)ViewBag.BBNT;
+    var ktv_bbnt = (IEnumerable<ASP_MVC.EF.KTV_BBNT>)ViewBag.KTV;
+    var ktv = (ASP_MVC.EF.NhanVien)ViewBag.NV;
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="~/Assets/Admin/js/controllers/KTV.js"></script>
+}
+
+@if (bbnt.Count > 0)
+{
+    foreach (var item in bbnt)
+    {<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h4 class="h4 mb-2 text-gray-800">Số BBNT @item.ID - @item.YeuCauPhucVu.KhachHang.HoTen - @item.NgayLap.Value.ToString("dd/MM/yyyy") - Doanh thu: @(item.DoanhThu.HasValue ? item.DoanhThu.Value.ToString("N0") : "")</h4>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <p>
+                @*<p hidden="@ViewBag.Hidden" style="float:left;margin-right:5px">
+                        @Html.ActionLink("+ Thêm chi tiết", "Create", new { id = item.ID, stt = idyc, kh = idkh }, new { @class = "btn btn-success" })
+                    </p>*@
+                @*<a href="#" data-toggle="modal" data-target=".dsKTV" class="btn btn-info listKTV" data-id="@item.ID">Danh sách KTV</a>*@
+                @*<a href="#" data-toggle="modal" data-target=".dsCP" class="btn btn-warning " data-id="@item.ID">PNL</a>*@
+                <input class="btn btn-dark" style="float:right" type="text" value="Tổng điểm: @item.Diem.Value.ToString("N2")" disabled="disabled" />
+                <input class="btn btn-danger" style="float:right;margin-right:10px" type="text" value="Điểm của bạn: @ktv_bbnt.SingleOrDefault(x=>x.IDUser == ktv.ID && x.IDBBNT == item.ID ).Diem.Value.ToString("N2")" disabled="disabled" />
+            </p>
+            <p style="clear:both"></p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tên dịch vụ/sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Điểm</th>
+                            <th>Các mã máy</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ct in Model)
+                        {
+                            if (ct.IDBBNT == item.ID)
+                            {
+                                <tr>
+                                    <td>@ct.DichVu_SanPham.TenDichVu_SanPham</td>
+                                    <td>@ct.SoLuong</td>
+                                    <td>@(ct.DichVu_SanPham.DonGia.Value.ToString("N0"))</td>
+                                    <td>@((ct.DichVu_SanPham.Diem.Value).ToString("N2"))</td>
+                                    <td>@ct.MayLanh</td>
+                                    <td>@ct.GhiChu</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @Html.Raw(TempData["msg"])
+</div>
+    }
+}
+else
+{
+    <div style="color:blue;text-align:center">Không có dữ liệu</div>
+}

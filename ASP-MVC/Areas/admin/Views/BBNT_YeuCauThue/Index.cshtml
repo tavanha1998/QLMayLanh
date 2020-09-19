@@ -1,0 +1,226 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@section JsFooter
+{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/BienBanNghiemThuController.js"></script>
+}
+<!-- Begin Page Content -->
+<div style="margin-left:30px">
+    @Html.ActionLink("+ Tạo biên bản", "ThemBBNT", new { stt = 0, kh = 0 }, new { @class = "btn btn-success " })
+    <a href="#" class="btn btn-primary hoanthanhyeucau" data-id="0">Xong yêu cầu</a>
+</div>
+<hr />
+ <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h4 class="h4 mb-2 text-gray-800">Biên bản nghiệm thu - Khách Hàng - ngày lập - Doanh thu</h4>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <p>
+                    @Html.ActionLink("+ Thêm chi tiết", "Create", new { id = 0, stt = 0, kh = 0 }, new { @class = "btn btn-success" })
+                    <a href="#" data-toggle="modal" data-target=".dsKTV" class="btn btn-info listKTV" data-id="0">Danh sách KTV</a>
+                    <a href="#" data-toggle="modal" data-target=".dsMay" class="btn btn-dark " data-id="0">Danh sách máy</a>
+                    <a href="#" data-toggle="modal" data-target=".dsCP" class="btn btn-warning " data-id="0">Chi phí khác</a>
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm table-hover" style="display: block; overflow-x: auto; white-space: nowrap;" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Tên dịch vụ/sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                                <th>Tổng điểm</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*@foreach (var ct in Model)
+                            {
+                                if (ct.IDBBNT == item.ID)
+                                {
+                                    <tr id="row_@ct.ID">
+
+                                        <td><input class="form-control" type="text" hidden="hidden" id="validmay_@ct.ID" value="@ct.IDMayPhucVu" /><p id="idmay_@ct.ID">@ct.IDMayPhucVu</p></td>
+                                        <td>@ct.MayPhucVu.TenMay</td>
+                                        <td>@ct.MayPhucVu.Model</td>
+                                        <td>@ct.MayPhucVu.ViTri</td>
+                                        <td><input class="form-control" type="text" hidden="hidden" id="valdvsp_@ct.ID" value="@ct.DichVu_SanPham.ID" /><p id="iddvsp_@ct.ID">@ct.DichVu_SanPham.TenDichVu_SanPham</p></td>
+                                        <td><input class="form-control" type="text" hidden="hidden" id="valsl_@ct.ID" value="@ct.SoLuong" /><p id="sl_@ct.ID">@ct.SoLuong</p></td>
+                                        <td>@(ct.DichVu_SanPham.DonGia.Value.ToString("N0"))</td>
+                                        <td>@((ct.DichVu_SanPham.DonGia.Value * ct.SoLuong).Value.ToString("N0"))</td>
+                                        <td>@((ct.DichVu_SanPham.Diem.Value * ct.SoLuong).Value.ToString("N0"))</td>
+                                        <td><input class="form-control" type="text" hidden="hidden" id="valgc_@ct.ID" value="@ct.GhiChu" /><p id="gc_@ct.ID">@ct.GhiChu</p></td>
+                                        <td>
+                                            <button class="btn chinhsuact btn-info" data-id="@ct.ID" data-stt="@idyc" data-kh="@idkh">
+                                                <i id="icon_@ct.ID" class="fas fa-pencil-alt"></i>
+                                            </button>
+                                        </td>
+                                        <td><a data-id="@ct.ID" data-idbbnt="@item.ID" class="xoact btn"><i class="fas fa-times"></i></a></td>
+                                    </tr>}
+                            }*@
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+ <div class="modal fade dsCP ">
+     <div class="modal-dialog modal-lg">
+         <div class="modal-content">
+             <div class="container-fluid">
+                 <!-- Page Heading -->
+                 <div class="modal-header">
+                     <h4 class="h4 mb-2 text-gray-800">Chi phí khác</h4>
+                     <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                 </div>
+                 <!-- DataTales Example -->
+                 <div class="card shadow mb-4">
+                     <div class="card-body">
+                         <p>
+                             <input class="form-control col-md-4" style="float:left" id="IdMay" type="text" placeholder="Tên chi phí" />
+                             <input class="form-control col-md-5" style="float:left; margin-left:10px" id="Diem" type="text" name="diem" placeholder="Số lượng" />
+                             <button class="btn btn-primary addKTV" style="clear:both; margin-left:10px">Thêm</button>
+                         <p></p>
+                         <input style="float:left;margin-right:10px" class="form-control col-md-4" id="DanhGia" name="danhgia" placeholder="Đơn giá" />
+                         <input class="form-control col-md-5" id="DanhGia" name="danhgia" placeholder="Ghi chú" />
+                         <input type="hidden" id="hidID" value="0" />
+
+
+                         </p>
+                         <div class="table-responsive">
+                             <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                 <thead>
+                                     <tr>
+                                         <th>Tên chi phí</th>
+                                         <th>Số lượng</th>
+                                         <th>Đơn giá</th>
+                                         <th>Thành tiền</th>
+                                         <th>Ghi chú</th>
+                                         <th></th>
+                                     </tr>
+                                 </thead>
+                                 <tbody class="abc" id="table_body"></tbody>
+                             </table>
+                         </div>
+                     </div>
+                 </div>
+
+             </div>
+         </div>
+     </div>
+ </div>
+ <div class="modal fade dsMay ">
+     <div class="modal-dialog modal-lg">
+         <div class="modal-content">
+             <div class="container-fluid">
+                 <!-- Page Heading -->
+                 <div class="modal-header">
+                     <h4 class="h4 mb-2 text-gray-800">Máy đang cho thuê</h4>
+                     <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                 </div>
+                 <!-- DataTales Example -->
+                 <div class="card shadow mb-4">
+                     <div class="card-body">
+                         <p>
+                             <input class="form-control col-md-4" style="float:left" id="IdMay" type="text" placeholder="Mã máy" />
+                             <input class="form-control col-md-5" style="float:left; margin-left:10px" id="Diem" type="text" name="diem" placeholder="Ngày bắt đầu" />
+
+                         <p style="clear:both"></p>
+                         <input style="float:left;margin-right:10px" class="form-control col-md-4" id="DanhGia" name="danhgia" placeholder="Ngày trả" />
+                         <button class="btn btn-primary addKTV" style="clear:both; margin-left:10px">Thêm</button>
+                         <input type="hidden" id="hidID" value="0" />
+
+
+                         </p>
+                         <div class="table-responsive">
+                             <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                 <thead>
+                                     <tr>
+                                         <th>Mã máy</th>
+                                         <th>Tên máy</th>
+                                         <th>Nhãn hiệu</th>
+                                         <th>Ngày cho thuê</th>
+                                         <th>Ngày trả</th>
+                                         <th></th>
+                                     </tr>
+                                 </thead>
+                                 <tbody class="abc" id="table_body"></tbody>
+                             </table>
+                         </div>
+                     </div>
+                 </div>
+
+             </div>
+         </div>
+     </div>
+ </div>
+<!-- /.container-fluid -->
+<div class="modal fade dsKTV ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Các KTV phụ trách</h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <p>
+                            <input class="form-control col-md-4" style="float:left" id="IDKTV" type="text" placeholder="Mã KTV" />
+                            <input class="form-control col-md-5" style="float:left; margin-left:10px" id="Diem" type="number" name="diem" placeholder="Điểm" />
+                            <button class="btn btn-primary addKTV" style="clear:both; margin-left:10px">Thêm</button>
+                        <p></p>
+                        <input class="form-control col-md-12" id="DanhGia" name="danhgia" placeholder="Đánh giá" />
+                        <input type="hidden" id="hidID" value="0" />
+
+
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên KTV</th>
+                                        <th>Điểm</th>
+                                        <th>Đánh giá</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr id="rowktv_{{ID}}">
+        <td>{{TenKTV}}</td>
+        <td>{{Diem}}</td>
+        <td>{{DanhGia}}</td>
+        <td><a class="btn btn-circle xoaktv" data-id="{{ID}}">X</a></td>
+    </tr>
+</script>

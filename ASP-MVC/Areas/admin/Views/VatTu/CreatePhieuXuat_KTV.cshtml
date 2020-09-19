@@ -1,0 +1,131 @@
+﻿@model ASP_MVC.EF.PhieuXuatVatTu_KTV
+
+@{
+    ViewBag.Title = "CreatePhieuXuat_KTV";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var selectktv = (IEnumerable<SelectListItem>)ViewBag.selectlistktv;
+    var selectycpv = (IEnumerable<SelectListItem>)ViewBag.selectlistycpv;
+    var selectvt = (IEnumerable<SelectListItem>)ViewBag.selectlist;
+}
+
+@section JsFooter{
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/PhieuXuat_KTV.js"></script>
+}
+
+<h2>Lập phiếu xuất vật tư - KTV</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        <h4><label style="color:blue">Thông tin phiếu: </label></h4>
+        <div class="form-group" style="float:left;width:300px">
+            <div class="col-md-15">
+                @Html.TextBox("IDKTV", null, new { @class = "form-control", @list = "dataktv", @placeholder = "Chọn KTV", @autocomplete="off",@id = "IDKTV" })
+                <datalist id="dataktv">
+                    @foreach (SelectListItem item in selectktv)
+                    {
+                        <option value="@item.Value. @item.Text" data-value="@item.Value"></option>
+                    }
+
+                </datalist>
+                @Html.ValidationMessageFor(model => model.IDKTV, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="float:left;width:300px;padding-left:15px">
+            <div class="col-md-15">
+                @Html.TextBox("IDYCPV", null, new { @class = "form-control", @list = "dataycpv", @placeholder = "Chọn yêu cầu phục vụ", @autocomplete="off",@id = "IDYCPV" })
+                <datalist id="dataycpv">
+                    @if (selectycpv.Count() > 0)
+                    {
+                        foreach (SelectListItem item in selectycpv)
+                        {
+                            <option value="@item.Value. @item.Text" data-value="@item.Value"></option>
+                        }
+                    }
+                    else
+                    {
+                        <option>Không có dữ liệu</option>
+                    }
+                </datalist>
+                @Html.ValidationMessageFor(model => model.IDYeuCauPV, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="float:left;width:300px;padding-left:15px">
+            <div class="col-md-15">
+                @Html.TextBox("GhiChu", null, new { @class = "form-control", @placeholder = "Ghi chú", @id = "ghichu" })
+                @Html.ValidationMessageFor(model => model.GhiChu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <p style="clear:both"></p>
+    <div class="form-horizontal">
+        <hr />
+        <h4><label style="color:blue">Thông tin chi tiết: </label></h4>
+        <div class="form-group" style="float:left;width:300px">
+            <div class="col-md-15">
+                @Html.TextBox("IDVatTu", null, new { @class = "form-control", @list = "datavt", @placeholder = "Chọn vật tư",@autocomplete="off", @id = "IDVatTu" })
+                <datalist id="datavt">
+                    @if (selectvt.Count() > 0)
+                    {
+                        foreach (SelectListItem item in selectvt)
+                        {
+                            <option value="@item.Value. @item.Text" data-value="@item.Value"></option>
+                        }
+                    }
+                    else
+                    {
+                        <option>Không có dữ liệu</option>
+                    }
+
+                </datalist>
+            </div>
+        </div>
+
+        <div class="form-group" style="float:left;width:300px;padding-left:15px">
+            <div class="col-md-15">
+                @Html.TextBox("SoLuong", null, new { @class = "form-control", @type = "number", @placeholder = "Số lượng", @id = "valsoluong" })
+            </div>
+        </div>
+
+        <div class="form-group" style="float:left;width:300px;padding-left:15px">
+            <div class="col-md-15">
+                @Html.TextBox("DonGia", null, new { @class = "form-control", @type = "number", @placeholder = "Giá bán", @id = "valdongia" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10" style="float:left">
+                @*<input type="submit" value="Lập phiếu" class="btn btn-success" />*@
+                @*@Html.ActionLink("Lập phiếu", "CreatePhieuXuatKho", null, new { @class = "btn btn-success" })*@
+                <a style="color:white;width:120px" class="btn btn-success TaoCT">Thêm chi tiết</a>
+                
+                @Html.ActionLink("Trở về", "PhieuXuat_KTV", null, new { @class = "btn btn-primary", style = "width:120px" })
+            </div>
+        </div>
+    </div>
+
+}
+<p style="clear:both"></p>
+<div class="table-responsive">
+    <table class="table table-hover table-bordered table-sm" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Mã vật tư</th>
+                <th>Tên vật tư</th>
+                <th>Số lượng</th>
+                <th>Đơn vị</th>
+                <th>Đơn giá</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableCT"></tbody>
+    </table>
+</div>
+<div style="float:right"><a style="color:white;width:120px" class="btn btn-danger LapPhieu">Lập phiếu</a></div>

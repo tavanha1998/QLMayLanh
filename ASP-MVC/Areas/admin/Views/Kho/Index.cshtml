@@ -1,0 +1,169 @@
+﻿@model IEnumerable<ASP_MVC.EF.KhoVatDung>
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var dem = 1;
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/KhoController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+<!-- Begin Page Content -->
+<div>
+    @using (Html.BeginForm("Import", "Kho", FormMethod.Post, new { style = "float:right;margin-right:25px", enctype = "multipart/form-data" }))
+    {
+        @Html.Raw(ViewBag.Error)
+        <input type="submit" value="Import" class="btn btn-primary" style="float:right" />
+        <input type="file" name="UploadedFile" />
+    }
+</div>
+<hr />
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Kho dụng cụ</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @Html.ActionLink("+ Thêm mới", "Create", null, new { @class = "btn btn-success btn-sm" })
+                @Html.ActionLink("Quản lý xuất dụng cụ", "PhieuXuatKho", null, new { @class = "btn btn-dark btn-sm" })
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>STT</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên vật dụng</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Ngày mua</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Ghi chú</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Tình trạng</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" width="100%" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên dụng cụ</th>
+                            @*<th>Đơn giá</th>
+                                <th>Số lượng</th>*@
+                            <th>Ngày mua</th>
+                            <th>Ghi chú</th>
+                            <th>Tình trạng</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" class="updateKho" data-id="@item.ID">
+                                <td>@dem</td>
+                                <td><input type="text" id="tenvatdung_@item.ID" class="form-control" value="@item.TenVatDung" hidden /><div id="tvd_@item.ID">@item.TenVatDung</div></td>
+                                @*<td><input type="text" size="25" id="dongia_@item.ID" class="form-control" value="@item.DonGia" disabled /></td>
+                                    <td><input type="text" size="25" id="soluong_@item.ID" class="form-control" value="@item.SoLuong" disabled /></td>*@
+                                <td><input type="text" id="ngaymua_@item.ID" class="form-control" value="@(item.NgayMua.HasValue? @item.NgayMua.Value.ToString("dd/MM/yyyy") : "")" hidden /><div id="nm_@item.ID">@(item.NgayMua.HasValue ? @item.NgayMua.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                                <td><input type="text" id="ghichu_@item.ID" class="form-control" value="@item.GhiChu" hidden /><div id="gc_@item.ID">@item.GhiChu</div></td>
+                                @if (item.Status == 1)
+                                {
+                            <td><button title="Hiện có" class="btn btn-success btn-sm"><i class="fas fa-check"></i> </button> Hiện có</td>
+                                }
+                                else if (item.Status == 2)
+                                {
+                                    <td><button title="Đang mượn" class="btn btn-warning btnDangMuon btn-sm" data-id="@item.ID"><i class="fas fa-people-carry"></i></button> Đang mượn</td>
+                                }
+                                else
+                                {
+                                    <td><button class="btn btn-danger btnMuon btn-sm" data-idphieumuon="@item.ID">Tình trạng 3</button></td>
+                                }
+                                <td>
+                                    <button title="Chỉnh sửa" type="button" data-id="@item.ID" class="btn btn-info btnEditkho btn-sm" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                </td>
+                                @if (ViewBag.QLNL == true)
+                                {
+                                    <td>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></a></td>
+                                }
+                            </tr>
+                            dem++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa dụng cụ?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

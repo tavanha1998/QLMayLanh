@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ASP_MVC.EF.CTPhieuNhapVatTu>
+
+@{
+    ViewBag.Title = "CTPhieuXuatKho";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var idpn = ViewBag.idpn;
+    var demct = 1;
+    var ngaynhap = ViewBag.NgayNhap;
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/PhieuXuatKhoController.js"></script>
+}
+<!-
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Phiếu nhập @idpn - Ngày nhập: @ngaynhap</h1>
+    <div class="idpx" hidden="hidden">@idpn</div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @*@Html.ActionLink("+ Thêm vật dụng", "Create", null, new { @class = "btn btn-success " })*@
+                @*@if (statuspx == 0)
+                    {
+                        <input type="button" value="+ Thêm vật dụng" id="btnadd" class="btn btn-success btnAddVatDung" />
+                    }*@
+                @Html.ActionLink("Trở về", "PhieuNhap", "VatTu", new { @class = "btn btn-primary" })
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên vật tư</th>
+                            <th>Số lượng</th>
+                            <th>Đơn vị</th>
+                            <th>Giá nhập</th>
+                            <th>Nhà cung cấp</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr id="row_@item.ID" class="updateKho" data-id="@item.ID">
+                            <td>@demct</td>
+                            <td>@item.VatTu.TenVatTu</td>
+                            <td>@item.SoLuong</td>
+                            <td>@item.VatTu.DonVi</td>
+                            <td>@item.DonGia</td>
+                            <td>@item.NCC</td>
+                        </tr>
+                            demct++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>

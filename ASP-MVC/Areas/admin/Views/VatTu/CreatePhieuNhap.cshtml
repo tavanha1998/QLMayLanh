@@ -1,0 +1,147 @@
+﻿@model ASP_MVC.EF.CTPhieuNhapVatTu
+@using PagedList.Mvc
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@{
+    ViewBag.Title = "CreatePhieuXuatKho";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var select = (IEnumerable<SelectListItem>)ViewBag.selectlist;
+}
+
+@section JsFooter{
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/PhieuNhapVatTuController.js"></script>
+}
+
+<h2>Lập phiếu nhập</h2>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group" style="float:left;width:61%">
+                            <div class="col-md-12">
+                                @*@Html.EditorFor(model => model.IDKTV, new { htmlAttributes = new { @class = "form-control txtidktv" } })*@
+                                @Html.TextBox("IDVatTu", null, new { @class = "form-control", @list = "data", @id = "IDVatTu", @autocomplete = "off", @placeholder = "Chọn vật tư" })
+
+                                <datalist id="data">
+                                    @if (select.Count() > 0)
+                                    {
+                                        foreach (SelectListItem item in select)
+                                        {
+                                            <option value="@item.Value. @item.Text" data-value="@item.Value"></option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option>Không có dữ liệu</option>
+                                    }
+
+                                </datalist>
+
+                            </div>
+                        </div>
+
+                        <div><a class="btn btn-primary themVT" data-toggle="modal" data-target=".themMoi" href="#">+ Vật tư mới</a></div>
+
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                @Html.TextBox("txtSoLuong", null, new { @class = "form-control d-inline", id = "txtSoLuong", placeholder = "Số lượng", style = "width:50%;" })
+                                @Html.TextBox("txtDonVi", null, new { @class = "form-control d-inline", id = "txtDonVi", placeholder = "Đơn vị", style = "width:49%;", disabled = "disabled" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                @Html.TextBox("txtDonGia", null, new { @class = "form-control", id = "txtDonGia", placeholder = "Giá mua" })
+                                @Html.ValidationMessageFor(model => model.DonGia, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                @Html.TextBox("txtNCC", null, new { @class = "form-control", id = "txtNCC", placeholder = "Nhà cung cấp" })
+                                @Html.ValidationMessageFor(model => model.NCC, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10" style="float:left">
+                                @*<input type="submit" value="Lập phiếu" class="btn btn-success" />*@
+                                @*@Html.ActionLink("Lập phiếu", "CreatePhieuXuatKho", null, new { @class = "btn btn-success" })*@
+                                <a style="color:white;width:120px" class="btn btn-success TaoCT">Thêm chi tiết</a>
+
+                                @Html.ActionLink("Trở về", "PhieuNhap", null, new { @class = "btn btn-primary", style = "width:120px" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group" style="float:right">
+                        @Html.LabelFor(model => model.GhiChu, "Ghi chú cho toàn phiếu", htmlAttributes: new { @class = "control-label col-md-5", @style = "color:red" })
+                        <div class="col-md-10">
+                            <div style="float:left;width:535px">@Html.TextAreaFor(model => model.GhiChu, new { @class = "form-control", @id = "ghichu" })</div>
+                            @Html.ValidationMessageFor(model => model.GhiChu, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p></p>
+<div class="table-responsive">
+    <table class="table table-hover table-bordered table-sm" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Mã vật tư</th>
+                <th>Tên vật tư</th>
+                <th>Số lượng</th>
+                <th>Đơn vị</th>
+                <th>Giá mua</th>
+                <th>Nhà cung cấp</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableCT"></tbody>
+    </table>
+</div>
+
+<div style="float:right"><a style="color:white;width:120px" class="btn btn-danger LapPhieu">Lập phiếu</a></div>
+
+<div class="modal fade themMoi">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Thêm vật tư</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <div>
+                        <input class="form-control col-md-7" style="float:left" type="text" id="valvattu" placeholder="Nhập tên vật tư mới" />
+                        <button style="margin-left:10px;float:left" data-dismiss="modal" class="btn btn-success addNew"><span>Tạo</span></button>
+                        <button style="margin-left:10px" data-dismiss="modal" class="btn btn-primary"><span>Trở về</span></button>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

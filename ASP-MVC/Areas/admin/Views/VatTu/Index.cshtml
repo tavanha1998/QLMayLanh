@@ -1,0 +1,214 @@
+﻿@model PagedList.IPagedList<ASP_MVC.EF.VatTu>
+@using PagedList.Mvc
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="~/Assets/Admin/js/controllers/VatTuController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+<!-- Begin Page Content -->
+<div>
+    @using (Html.BeginForm("Import", "VatTu", FormMethod.Post, new { style = "float:right;margin-right:25px", enctype = "multipart/form-data" }))
+    {
+        @Html.Raw(ViewBag.Error)
+        <input type="submit" value="Import" class="btn btn-primary" style="float:right" />
+        <input type="file" name="UploadedFile" />
+    }
+</div>
+<hr />
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Kho vật tư</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @Html.ActionLink("+ Thêm mới", "Create", null, new { @class = "btn btn-success btn-sm" })
+                @Html.ActionLink("Nhập vật tư", "PhieuNhap", null, new { @class = "btn btn-primary btn-sm" })
+                @Html.ActionLink("Xuất vật tư (KTV)", "PhieuXuat_KTV", null, new { @class = "btn btn-dark btn-sm" })
+                @Html.ActionLink("Xuất vật tư (Khách lẻ)", "PhieuXuat_Khach", null, new { @class = "btn btn-dark btn-sm" })
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Tên vật tư</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Đơn vị</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Số lượng</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Giá mua</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Giá bán</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Tên vật tư</th>
+                            <th>Đơn vị</th>
+                            <th>Số lượng</th>
+                            <th>Giá mua</th>
+                            <th>Giá bán</th>
+                            @*<th>Ghi chú</th>*@
+                            @*<th>Tình trạng</th>*@
+                            @if (ViewBag.QLNL == null)
+                            {
+                                <th></th>
+                                <th></th>
+                            }
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" class="updateVatTu" data-id="@item.ID">
+                                <td>@item.TenVatTu</td>
+                                <td ><input type="text" id="valdonvi_@item.ID" class="form-control" value="@item.DonVi" hidden /><div id="donvi_@item.ID">@item.DonVi</div></td>
+                                <td><input type="number" id="valslg_@item.ID" class="form-control" value="@item.SoLuong" hidden /><div id="slg_@item.ID">@item.SoLuong</div></td>
+                                <td>@(item.GiaNhap.HasValue ? item.GiaNhap.Value.ToString("N0") : "0")</td>
+                                <td><input type="number" id="valgiaban_@item.ID" class="form-control" value="@(item.GiaBan.HasValue?item.GiaBan.Value : 0)" hidden /><div id="giaban_@item.ID">@(item.GiaBan.HasValue ? item.GiaBan.Value.ToString("N0") : "0")</div></td>
+                                @*<td><input type="text" size="25" id="ghichu_@item.ID" class="form-control" value="@item.GhiChu" disabled /></td>*@
+
+                                @if (ViewBag.QLNL == null)
+                                {
+                                    <td>
+                                        <button title="Chỉnh sửa" type="button" data-id="@item.ID" class="btn btn-info btnEditVatTu btn-sm" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                        <button title="Lịch sử nhập" data-toggle="modal" data-target=".dsLichSu" type="button" data-id="@item.ID" class="btn btn-sm btn-primary btnLichSu" style="color:white"><i id="icon_@item.ID" class="fas fa-list"></i></button>
+                                    </td>
+                                    <td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></a></td>
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa vật tư?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade dsLichSu">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-danger">Lịch sử nhập vật tư</h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Mã phiếu nhập</th>
+                                        <th>Tên vật tư</th>
+                                        <th>Slg nhập</th>
+                                        <th>Giá nhập</th>
+                                        <th>Nhà cung cấp</th>
+                                        <th>Ngày nhập</th>
+                                        @*<th>Ghi chú</th>*@
+                                        @*<th>Điểm</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_bodyLichSu"></tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-templateLichSu" type="x-tmpl-mustache">
+    <tr>
+        <td>{{MaPN}}</td>
+        <td>{{TenVatTu}}</td>
+        <td>{{SoLuong}}</td>
+        <td>{{GiaMua}}</td>
+        <td>{{NCC}}</td>
+        <td>{{NgayNhap}}</td>
+        @*<td>{{GhiChu}}</td>*@
+    </tr>
+</script>

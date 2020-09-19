@@ -1,0 +1,123 @@
+﻿@model PagedList.IPagedList<ASP_MVC.EF.PhieuNhapVatTu>
+@using PagedList.Mvc
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/PhieuNhapVatTuController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+<!-- Begin Page Content -->
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Quản lý phiếu nhập</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                @Html.ActionLink("+ Lập phiếu", "CreatePhieuNhap", null, new { @class = "btn btn-success btn-sm" })
+                @Html.ActionLink("Trở về", "Index", "VatTu", new { @class = "btn btn-primary btn-sm" })
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Mã phiếu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Ngày nhập</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Ghi chú</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable"  width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu</th>
+                            <th>Ngày nhập</th>
+                            <th>Ghi chú</th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" class="updateVatTu" data-id="@item.ID">
+                                <td>@item.ID</td>
+                                <td>@item.NgayNhap.Value.ToString("dd/MM/yyyy")</td>
+                                <td><input type="text" size="25" id="ghichu_@item.ID" class="form-control updatePN" data-id="@item.ID" value="@item.GhiChu" disabled /></td>
+                                <td>
+                                    <a href="@Url.Action("CTPhieuNhap", "VatTu", new { idphieunhap = item.ID })" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Chi tiết phiếu nhập"><i class="fas fa-clipboard-list"></i></a>
+                                    <button title="Chỉnh sửa" type="button" data-id="@item.ID" class="btn btn-sm btn-info btnEditPN" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                    <a href="@Url.Action("DownloadExcel_PhieuNhap", "VatTu", new { id = item.ID })" class="btn btn-sm btn-success" data-toggle="tooltip" title="Export"><i class="fas fa-download"></i></a>
+                                </td>
+                                <!--<td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn"><i class="fas fa-times"></i></a></td>-->
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa phiếu?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,194 @@
+﻿@model IEnumerable<ASP_MVC.Areas.admin.Models.LichSuMay>
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "LichSuSuaChua";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var idmay = ViewBag.IDmay;
+    var bd = ViewBag.Ngaybd;
+    var kt = ViewBag.Ngaykt;
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+    <script src="~/Assets/Admin/js/controllers/MayPhucVuController.js"></script>
+}
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Lịch sử sửa chữa của máy công ty </h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            @Html.ActionLink("Trở về", "Index", "MayChoThue", null, new { @class = "btn btn-primary btn-sm", @style = "float:left" })
+            @using (Html.BeginForm("LichSuSuaChua", "MayChoThue", FormMethod.Get))
+            {
+                <p style="float:left;margin-left:200px;width:450px;display:flex">
+                    <input style="margin-right:10px" class="form-control col-md-5" name="idmay" type="text" value="@idmay" hidden />
+                    @if (bd != null)
+                    {
+                        <input style="margin-right:10px" class="form-control col-md-5" name="ngaybd" type="text" placeholder="Từ ngày..." value="@bd" />
+                    }
+                    else
+                    {
+                        <input style="margin-right:10px" class="form-control col-md-5" name="ngaybd" type="text" placeholder="Từ ngày..." value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+                    }
+                    @if (kt != null)
+                    {
+                        <input style="margin-right:10px" class="form-control col-md-5" name="ngaykt" type="text" placeholder="Đến ngày..." value="@kt" />
+                    }
+                    else
+                    {
+                        <input style="margin-right:10px" class="form-control col-md-5" name="ngaykt" type="text" placeholder="Đến ngày..." value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+                    }
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                </p>
+            }
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Số BBNT</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên máy</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Model - Nhãn hiệu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Công suất</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Vị trí</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Mã DV</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox7" class="form-check-input" checked />
+                            <label>Tên DV</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox8" class="form-check-input" checked />
+                            <label>Ngày sửa chữa</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" style="display: block; white-space: nowrap;" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Số BBNT</th>
+                            <th>Tên máy</th>
+                            <th>Model - Nhãn hiệu</th>
+                            <th>Công suất</th>
+                            <th>Vị trí</th>
+                            <th>Mã dịch vụ</th>
+                            <th>Tên dịch vụ</th>
+                            <th>Ngày sửa chữa</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tableLichSu">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="updateMPV" data-id="@item.Idbbnt" id="row_@item.Idbbnt">
+                                <td>@item.Idbbnt</td>
+                                <td>@item.Tenmay</td>
+                                <td>@item.Model</td>
+                                <td>@item.Congsuat</td>
+                                <td>@item.Vitri</td>
+                                <td>@item.Iddichvu</td>
+                                <td>@item.Tendichvu</td>
+                                <td id="NgaySuaChua">@item.Ngaythuchien.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <button type="button" data-toggle="modal" data-target=".dsKTV" title="KTV phụ trách" data-idbbnt="@item.Idbbnt" class="btn btn-primary btnXemKTV btn-sm" style="color:white"><i class="fas fa-users"></i></button>
+                                    @*@Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.ID, idkh = item.IDKhachHang }, new { @class = "btn btn-info", @style = "color:white" })*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+<div class="modal fade dsKTV ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Các KTV phụ trách </h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên KTV</th>
+                                        <th>Điểm</th>
+                                        <th>Đánh giá</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr id="rowktv_{{ID}}">
+        <td>{{TenKTV}}</td>
+        <td>{{Diem}}</td>
+        <td>{{DanhGia}}</td>
+    </tr>
+</script>

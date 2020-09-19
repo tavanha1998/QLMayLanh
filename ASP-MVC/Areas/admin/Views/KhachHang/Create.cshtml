@@ -1,0 +1,73 @@
+﻿@model ASP_MVC.EF.KhachHang
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Thêm mới khách hàng</h2>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.HoTen, new { htmlAttributes = new { @class = "form-control",placeholder="Họ và tên" } })
+                                    @Html.ValidationMessageFor(model => model.HoTen, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.SDT, new { htmlAttributes = new { @class = "form-control",type="text",maxlength ="10",placeholder="Số điện thoại" } })
+                                    @Html.ValidationMessageFor(model => model.SDT, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.DiaChi, "Địa chỉ", new { htmlAttributes = new { @class = "form-control",placeholder="Địa chỉ" } })
+                                    @Html.ValidationMessageFor(model => model.DiaChi, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Loai,"Loại khách hàng",htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor(model => model.Loai, new List<SelectListItem>
+                                        ()
+                                        {
+                                        new SelectListItem(){Selected=true, Text= "Khách lẻ", Value = "false" },
+                                        new SelectListItem(){Selected=false, Text= "Hợp đồng", Value = "true" },
+                                        }, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Loai, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10" style="float:left">
+                                    <input type="submit" value="Thêm" class="btn btn-success" />
+                                    @Html.ActionLink("Trở về", "Index", null, new { @class = "btn btn-primary" })
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

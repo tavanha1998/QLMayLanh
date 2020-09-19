@@ -1,0 +1,198 @@
+﻿@model IEnumerable<ASP_MVC.EF.KhachHang>
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/KhachHangController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+<div>
+    @using (Html.BeginForm("Import", "KhachHang", FormMethod.Post, new { style = "float:right;margin-right:25px", enctype = "multipart/form-data" }))
+    {
+        @Html.Raw(ViewBag.Error)
+        <input type="submit" value="Import" class="btn btn-primary" style="float:right" />
+        <input type="file" name="UploadedFile" />
+    }
+</div>
+<hr />
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Khách hàng</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">@Html.ActionLink("+ Thêm mới", "Create", null, new { @class = "btn btn-success btn-sm" })</div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>STT</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên khách hàng</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>SDT</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Địa chỉ</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Ngày phục vụ</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Loại khách hàng</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            @*@using (Html.BeginForm("Index", "KhachHang", FormMethod.Get))
+                {
+                    <p style="float:right;width:300px">
+                        <input class="form-control col-md-9" style="float:left" name="searchString" placeholder="Tên/SDT/Địa chỉ" />
+                        <button style="margin-left:10px" class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                    </p>
+                }*@
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-sm" style="display: block" width="100%" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên khách hàng</th>
+                            <th>SDT</th>
+                            <th>Địa chỉ</th>
+                            <th>Ngày phục vụ</th>
+                            <th>Loại</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count() > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                if (item.NgayPhucVu.HasValue)
+                                {
+                                    if (item.NgayPhucVu.Value.Date <= DateTime.Now.Date)
+                                    {
+                                        ViewBag.Color = "background-color:red;color:white";
+                                    }
+                                    else
+                                    {
+                                        ViewBag.Color = "";
+                                    }
+                                }
+                                else
+                                { ViewBag.Color = ""; }
+                                <tr id="row_@item.ID" class="updateKH" data-id="@item.ID">
+                                    <td style="@ViewBag.Color" width="5%" id="id">@item.ID</td>
+                                    <td width="20%"><input type="text" id="hoten_@item.ID" class="form-control" value="@item.HoTen" hidden /><div id="ht_@item.ID">@item.HoTen</div></td>
+                                    <td width="10%"><input type="text" maxlength="11" size="12" id="sdt_@item.ID" class="form-control" value="@item.SDT" hidden /><div id="sdtt_@item.ID">@item.SDT</div></td>
+                                    <td width="25%"><input type="text" id="diachi_@item.ID" class="form-control" value="@item.DiaChi" hidden /><div id="dc_@item.ID">@item.DiaChi</div></td>
+                                    <td width="15%"><input type="text" size="10" id="ngaypv_@item.ID" class="form-control" value="@(item.NgayPhucVu.HasValue ? item.NgayPhucVu.Value.ToString("dd/MM/yyyy") : "")" hidden /><div id="npv_@item.ID">@(item.NgayPhucVu.HasValue ? item.NgayPhucVu.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                                    <td width="10%">
+                                        @if (item.Loai == true)
+                                        {
+                                            <div id="loaihd_@item.ID">Hợp đồng</div>
+                                        }
+                                        else
+                                        {
+                                            <div id="loaihd_@item.ID">Khách lẻ</div>
+                                        }
+                                        <select class="form-control" id="loai_@item.ID" hidden>
+                                            @if (item.Loai == true)
+                                            {
+                                                <option value="true" selected>Hợp đồng</option>
+                                                <option value="false">Khách lẻ</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="true">Hợp đồng</option>
+                                                <option value="false" selected>Khách lẻ</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td width="10%">
+                                        @*@Html.ActionLink("Danh sách máy", "DSMay", new { id = item.ID }, new { @class = "btn btn-primary", @style = "color:white" })*@
+                                        @if (item.ID != 1)
+                                        {<a href="@Url.Action("DSMay", "KhachHang", new { id = item.ID })" class="btn btn-primary btn-sm" data-toggle="tooltip" title="DS Máy"><i class="fas fa-clipboard-list"></i></a>}
+                                        <button type="button" data-idkh="@item.ID" class="btn btn-info btnEditKH btn-sm" data-toggle="tooltip" title="Chỉnh sửa" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                    </td>
+                                    @*<td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-circle">X</a></td>*@
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @*<div style="float:right">@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.search }))</div>*@
+        </div>
+    </div>
+    @Html.Raw(TempData["msg"])
+</div>
+<!-- /.container-fluid -->
+
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận xóa khách hàng này?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,172 @@
+﻿@model IEnumerable<ASP_MVC.EF.DichVu_SanPham>
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/DichVuController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+    @*<script src="~/Assets/Admin/js/plugin/jquery.twbsPagination.min.js"></script>*@
+}
+
+<style type="text/css">
+    #dataTable >tbody>tr>td{
+  height:20px;
+  vertical-align:middle;
+  padding:0 10px 0 10px;
+  border-top: 0px;
+}
+</style>
+<!-- Begin Page Content -->
+<div>
+    @using (Html.BeginForm("Import", "DichVu", FormMethod.Post, new { style = "float:right;margin-right:25px", enctype = "multipart/form-data" }))
+    {
+        @Html.Raw(ViewBag.Error)
+        <input type="submit" value="Import" class="btn btn-primary" style="float:right" />
+        <input type="file" name="UploadedFile" />
+    }
+</div>
+<hr />
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Dịch vụ - Sản phẩm</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-sm-2">
+            <div style="float:left">@Html.ActionLink("+ Thêm mới", "Create", null, new { @class = "btn btn-success btn-sm" })</div>
+
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Mã dịch vụ</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên dịch vụ</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Loại</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Đơn giá</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Điểm</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Ngày áp dụng</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            @*@using (Html.BeginForm("Index", "DichVu", FormMethod.Get, new { style = "float:right" }))
+                {
+                    <p style="float:right;width:300px">
+                        <input class="form-control col-md-9" style="float:left" name="searchString" placeholder="Tên/mã dịch vụ" />
+                        <button style="margin-left: 10px " class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                    </p>
+                }*@
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã DV</th>
+                            <th>Tên dịch vụ</th>
+                            <th>Loại</th>
+                            <th>Đơn giá</th>
+                            <th>Điểm</th>
+                            <th>Ngày áp dụng</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="updateDVSP" id="row_@item.ID" data-id="@item.ID">
+                                <td width="10%">@item.MaDV_SP</td>
+                                <td width="30%"><input type="text" id="valtendv_@item.ID" class="form-control" value="@item.TenDichVu_SanPham" hidden /><div id="tendv_@item.ID">@item.TenDichVu_SanPham</div></td>
+                                <td width="13%">
+                                    <select class="form-control" id="valloai_@item.ID" disabled>
+                                        @if (item.Loai == true)
+                                        {
+                                            <option value="true" selected>Dịch vụ</option>
+                                            <option value="false">Sản phẩm</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="true">Dịch vụ</option>
+                                            <option value="false" selected>Sản phẩm</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td width="12%"><input type="number" id="valdongia_@item.ID" class="form-control" value="@item.DonGia" hidden /><div id="dongia_@item.ID">@(item.DonGia.HasValue ? item.DonGia.Value.ToString("N0") : "0")</div></td>
+                                <td width="8%"><input type="number" id="valdiem_@item.ID" class="form-control" value="@(item.Diem.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))" hidden /><div id="diem_@item.ID">@(item.Diem.HasValue ? item.Diem.Value.ToString("N2") : "0")</div></td>
+                                <td width="15%">@item.NgayApDung.Value.ToString("dd/MM/yyyy")</td>
+                                <td width="5%">
+                                    <button type="button" data-toggle="tooltip" title="Chỉnh sữa" data-iddv="@item.ID" class="btn btn-info btn-sm btnEditDV" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                </td>
+                                <td width="5%"><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*<div style="float:right">@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.search }))</div>*@
+            </div>
+        </div>
+    </div>
+    @Html.Raw(TempData["msg"])
+</div>
+<!-- /.container-fluid -->
+
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận hủy dịch vụ?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width: 70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,341 @@
+﻿@model  IEnumerable<ASP_MVC.EF.YeuCauPhucVu>
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var ycct = (IEnumerable<ASP_MVC.EF.YeuCauPhucVu>)ViewBag.YCCT;
+}
+@section JsFooter{
+    @*<script src="~/Assets/Admin/js/plugin/jquery.twbsPagination.min.js"></script>*@
+    @*<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+    <script src="~/Assets/Admin/js/controllers/YeuCauPhucVuController.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+    #dataTable1 > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+
+</style>
+
+<div style="margin-left:30px">
+    @Html.ActionLink("+ Thêm mới yêu cầu", "Create", null, new { @class = "btn btn-success " })
+    @Html.ActionLink("Yêu cầu đã hoàn thành", "YCHoanThanh", null, new { @class = "btn btn-primary " })
+    @Html.ActionLink("Yêu cầu bị hủy", "YCHuy", null, new { @class = "btn btn-danger" })
+
+</div>
+<hr />
+<!-- Yêu cầu phục vụ -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 h3 mb-2 text-gray-800">
+            <p style="float:left">Yêu cầu bảo trì/sửa chữa</p>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" value="0" checked />
+                            <label>Ngày bắt đầu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Yêu cầu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Tên khách hàng</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Số điện thoại</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Địa chỉ phục vụ</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox8" class="form-check-input" checked />
+                            <label>Ngày làm tiếp</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox9" class="form-check-input" checked />
+                            <label>Ngày lập phiếu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox10" class="form-check-input" checked />
+                            <label>Số ngày đã làm</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            @*@using (Html.BeginForm("Index", "Admin", FormMethod.Get))
+        {
+            <p style="float:right;width:300px">
+                <input class="form-control col-md-9" style="float:left" name="searchStringPV" placeholder="Tên/SDT khách hàng" />
+                <button style="margin-left:10px" class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+            </p>
+        }*@
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-sm" style="display: block; white-space: nowrap" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th ></th>
+                            @*<th>Mã yêu cầu</th>*@
+                            <th >Ngày bắt đầu</th>
+                            <th >Yêu cầu</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ phục vụ</th>
+                            @*<th>Loại</th>*@
+                            <th></th>
+                            <th >Ngày làm tiếp</th>
+                            <th >Ngày lập</th>
+                            <th >Số ngày đã làm</th>
+                            <th ></th>
+                        </tr>
+                    </thead>
+                    @*<tfoot>
+                            <tr>
+                                <th>Tài khoản</th>
+                                <th>Họ tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Tùy chỉnh</th>
+                            </tr>
+                        </tfoot>*@
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" class="updateYCPV" data-id="@item.ID">
+                                @if (item.Status.Value == 0)
+                                {
+                                    <td><a class="btn  btn-success changestatus btn-sm" data-toggle="tooltip" title="Đang chờ" style="color:white" data-id="@item.ID" data-status="@item.Status"><i class="fas fa-spinner"></i></a></td>
+                                }
+                                else if (item.Status.Value == 2)
+                                {
+                                    <td><a class="btn  btn-danger changestatus btn-sm" data-toggle="tooltip" title="Cần xử lý" style="color:white" data-id="@item.ID" data-status="@item.Status"><i class="fas fa-exclamation-triangle iconstatus_@item.ID"></i></a></td>
+                                }
+                                else
+                                {
+                                    <td><a class="btn  btn-warning changestatus btn-sm" data-toggle="tooltip" title="Đang làm" style="color:white" data-id="@item.ID" data-status="@item.Status"><i class="fas fa-people-carry "></i></a></td>
+                                }
+                                @*<td>@item.ID</td>*@
+                                <td><input class="form-control" type="text" hidden="hidden" id="valngaybatdau_@item.ID" value="@(item.NgayBatDau.HasValue ? item.NgayBatDau.Value.ToString("dd/MM/yyyy") : "")" /><div id="ngaybatdau_@item.ID">@(item.NgayBatDau.HasValue ? item.NgayBatDau.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="valyeucau_@item.ID" value="@item.YeuCau" /><div id="yeucau_@item.ID">@item.YeuCau</div></td>
+                                <td>@item.KhachHang.HoTen</td>
+                                <td>@item.KhachHang.SDT</td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="valdiachi_@item.ID" value="@item.DiaChiPhucVu" /><div id="diachi_@item.ID">@item.DiaChiPhucVu</div></td>
+                                @*@if (item.Loai == 1)
+                                    {
+                                        <td>Sửa chữa/VSML</td>
+                                    }
+
+                                    else if (item.Loai == 3)
+                                    {
+                                        <td>Lắp đặt máy</td>
+                                    }*@
+                                <td>
+                                    <button class="btn bbnt btn-primary btn-sm" data-toggle="tooltip" title="BBNT" data-id="@item.ID" data-idkh="@item.IDKhachHang">
+                                        <i class="fas fa-clone"></i>
+                                    </button>
+                                    <button class="btn chinhsua btn-info btn-sm" data-toggle="tooltip" title="Chỉnh sửa" data-id="@item.ID" data-idkh="@item.IDKhachHang">
+                                        <i id="icon_@item.ID" class="fas fa-pencil-alt"></i>
+                                    </button>
+
+                                </td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="valngaylamtiep_@item.ID" value="@(item.NgayLamTiep.HasValue ? item.NgayLamTiep.Value.ToString("dd/MM/yyyy") : "")" /><div id="ngaylamtiep_@item.ID">@(item.NgayLamTiep.HasValue ? item.NgayLamTiep.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                                <td>@(item.NgayLap.HasValue ? item.NgayLap.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td>@item.SoNgay</td>
+                                @*<td>
+                                        @Html.ActionLink("Biên bản nghiệm thu", "BBNT", new { id = item.ID, idkh = item.IDKhachHang }, new { @class = "btn btn-primary" })
+                                        @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.ID }, new { @class = "btn bg-gradient-info", @style = "color:white" })
+                                    </td>*@
+                                @if (ViewBag.QLNL == true)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td><button data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></button></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*<div style="float:right">@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchStringPV = ViewBag.searchPV }))</div>*@
+            </div>
+        </div>
+    </div>
+    @*@Html.Raw(TempData["msg"])*@
+</div>
+
+<div class="modal fade abc">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Bạn muốn hủy yêu cầu này?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <span>Lý do hủy: <input id="lydo" type="text" /></span>
+                    <button data-dismiss="modal" class="btn btn-primary xacnhan"><span>Xác nhận</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 h3 mb-2 text-gray-800">
+            <p style="float:left">Yêu cầu thuê máy lạnh</p>
+            @*@using (Html.BeginForm("Index", "Admin", FormMethod.Get))
+            {
+                <p style="float:right;width:300px">
+                    <input class="form-control col-md-9" style="float:left" name="searchStringCT" placeholder="Tên/SDT khách hàng" />
+                    <button style="margin-left:10px" class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                </p>
+            }*@
+        </div>
+        <div class="card-body">
+            @*@Html.DropDownList("StatusCT", new List<SelectListItem>()
+                {
+                    new SelectListItem(){Text= "Đang chờ", Value = "0" },
+                    new SelectListItem(){Text= "Đang làm", Value = "1" },
+                    new SelectListItem(){Text= "Cần xử lý", Value = "2" },
+                    new SelectListItem(){Text= "Hoàn thành", Value = "3" },
+                    new SelectListItem(){Text= "Hủy", Value = "4" },
+                }, "Lọc trạng thái", new { @class = "form-control ", @style = "width:200px;float:left" })*@
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" style="display: block;
+        white-space: nowrap;
+    " id="dataTable1" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Yêu cầu</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ phục vụ</th>
+                            <th></th>
+                            <th>Ngày lập</th>
+                            <th>Ngày trả dự kiến</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @*<tfoot>
+                            <tr>
+                                <th>Tài khoản</th>
+                                <th>Họ tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Tùy chỉnh</th>
+                            </tr>
+                        </tfoot>*@
+                    <tbody>
+                        @foreach (var item in ycct)
+                        {
+                            <tr id="row_@item.ID" class="updateYCPV" data-id="@item.ID">
+
+                                @if (item.Status.Value == 0)
+                                {
+                                    <td><a class="btn btn-success changestatus btn-sm" data-toggle="tooltip" title="Đang chờ" style="color:white" data-id="@item.ID" data-status="@item.Status"><i class="fas fa-spinner"></i></a></td>
+                                }
+                                else if (item.Status.Value == 2)
+                                {
+                                    <td><a href="#" class="btn btn-danger changestatus btn-sm" data-toggle="tooltip" title="Cần xử lý" style="color:white" data-id="@item.ID" data-status="@item.Status"><i class="fas fa-exclamation-triangle iconstatus_@item.ID"></i></a></td>
+                                }
+                                else
+                                {
+                                    <td><a class="btn btn-warning changestatus btn-sm" data-toggle="tooltip" title="Đang làm" style="color:white" data-id="@item.ID" data-status="@item.Status"><i class="fas fa-people-carry"></i></a></td>
+                                }
+                                <td><input class="form-control" type="text" hidden="hidden" id="valngaybatdau_@item.ID" value="@(item.NgayBatDau.HasValue ? item.NgayBatDau.Value.ToString("dd/MM/yyyy") : "")" /><div id="ngaybatdau_@item.ID">@(item.NgayBatDau.HasValue ? item.NgayBatDau.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="valyeucau_@item.ID" value="@item.YeuCau" /><div id="yeucau_@item.ID">@item.YeuCau</div></td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="idkh_@item.ID" value="@item.IDKhachHang" /><input hidden="hidden" id="valueKH_@item.ID" value="@item.IDKhachHang" /><div id="tenkh_@item.ID">@item.KhachHang.HoTen</div></td>
+                                <td>@item.KhachHang.SDT</td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="valdiachi_@item.ID" value="@item.DiaChiPhucVu" /><div id="diachi_@item.ID">@item.DiaChiPhucVu</div></td>
+                                <td>
+                                    <button class="btn bbnt btn-primary btn-sm" data-toggle="tooltip" title="BBNT" data-id="@item.ID" data-idkh="@item.IDKhachHang">
+                                        <i class="fas fa-clone"></i>
+                                    </button>
+                                    @*@Html.ActionLink("BBNT", "BBNT_YCThue", new { @class = "btn btn-success" })*@
+                                    <button class="btn chinhsua btn-info btn-sm" data-toggle="tooltip" title="Chỉnh sửa" data-id="@item.ID">
+                                        <i id="icon_@item.ID" class="fas fa-pencil-alt"></i>
+                                    </button>
+
+                                </td>
+                                <td>@(item.NgayLap.HasValue ? item.NgayLap.Value.ToString("dd/MM/yyyy") : "")</td>
+
+                                <td><input class="form-control" type="text" hidden="hidden" id="valngaylamtiep_@item.ID" value="@(item.NgayDuKienTra.HasValue ? item.NgayDuKienTra.Value.ToString("dd/MM/yyyy") : "")" /><div id="ngaylamtiep_@item.ID">@(item.NgayDuKienTra.HasValue ? item.NgayDuKienTra.Value.ToString("dd/MM/yyyy") : "")</div></td>
+                                @if (ViewBag.QLNL == true)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <button data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @*<div style="float:right">@Html.PagedListPager(ycct, page => Url.Action("Index", new { page, searchStringCT = ViewBag.searchCT }))</div>*@
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->

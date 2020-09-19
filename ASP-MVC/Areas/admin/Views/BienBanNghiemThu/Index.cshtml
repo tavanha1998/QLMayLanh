@@ -1,0 +1,325 @@
+﻿@model IEnumerable<ASP_MVC.EF.CTBienBanNghiemThu>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var bbnt = (List<ASP_MVC.EF.BienBanNghiemThu>)ViewBag.BBNT;
+    var ctbbnt = (List<ASP_MVC.EF.CTBienBanNghiemThu>)ViewBag.CTBBNT;
+    var phieuxuatvt = (List<ASP_MVC.EF.CTPhieuXuatVatTu_KTV>)ViewBag.CTPhieuXuatVT;
+    var dsKTV = (List<ASP_MVC.EF.NhanVien>)ViewBag.KTV;
+    long idkh = ViewBag.IDKH;
+    long idyc = ViewBag.IDYC;
+    var kh = (ASP_MVC.EF.KhachHang)ViewBag.KH;
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@section JsFooter
+{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/BienBanNghiemThuController.js"></script>
+}
+
+<style type="text/css">
+    .modal-lg {
+    max-width: 80%;
+}
+
+</style>
+
+<!-- Begin Page Content -->
+<div style="margin-left:30px; margin-right:30px">
+    <p hidden="@ViewBag.Hidden" style="float:left;margin-right:5px">@Html.ActionLink("+ Tạo biên bản", "ThemBBNT", new { stt = idyc, kh = idkh }, new { @class = "btn btn-success " })</p>
+    <a href="#" class="btn btn-danger PNL" data-toggle="modal" data-target=".dsPNL" data-id="@idyc">PNL</a>
+    @Html.ActionLink("Trở về", "Index", "Admin", null, new { @class = "btn btn-primary" })
+    <a href="#" hidden="@ViewBag.Hidden" class="btn btn-primary hoanthanhyeucau" style="float:right"  data-id="@idyc">Hoàn thành yêu cầu</a>
+</div>
+<p style="clear:both"></p>
+<hr />
+@foreach (var item in bbnt)
+{
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h4 class="h4 mb-2 text-gray-800">
+            Số BBNT @item.ID - @item.YeuCauPhucVu.KhachHang.HoTen - @item.NgayLap.Value.ToString("dd/MM/yyyy") - Doanh thu: @(item.DoanhThu.HasValue ? item.DoanhThu.Value.ToString("N0") : "") -
+            <input style="color:red;text-align:center;width:100px" id="mabbnt_@item.ID" class="onkeypress" data-idbbnt="@item.ID" value="@item.Ma" type="number" />
+            @if (ViewBag.QLNL == true)
+            {
+            }
+            else
+            {<a style="float:right" data-idbbnt="@item.ID" class="xoabbnt btn"><i class="fas fa-times"></i></a>
+            }
+            </h4>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <p>
+                <p hidden="@ViewBag.Hidden" style="float:left;margin-right:5px">
+                    @Html.ActionLink("+ Thêm chi tiết", "Create", new { id = item.ID, stt = idyc, kh = idkh }, new { @class = "btn btn-success" })
+                </p>
+                <a href="#" data-toggle="modal" data-target=".dsKTV" class="btn btn-info listKTV" data-id="@item.ID">Danh sách KTV</a>
+                @*<a href="#" data-toggle="modal" data-target=".dsCP" class="btn btn-warning " data-id="@item.ID">PNL</a>*@
+                <input class="btn btn-dark" style="float:right" type="text" value="Tổng điểm: @item.Diem.Value.ToString("N2")" disabled="disabled" />
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Tên dịch vụ/sản phẩm</th>
+                                <th>Slg</th>
+                                <th>Đơn giá</th>
+                                <th>Điểm</th>
+                                <th>Các mã máy</th>
+                                <th>Giá đầu vào</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ct in Model)
+                            {
+                                if (ct.IDBBNT == item.ID)
+                                {
+                            <tr id="row_@ct.ID" class="updatectBBNT" data-ycpv="@idyc" data-id="@ct.ID" data-kh="@idkh">
+                                <td>@ct.DichVu_SanPham.TenDichVu_SanPham</td>
+                                <td ><input class="form-control" type="text" size="5" hidden="hidden" id="valsl_@ct.ID" value="@ct.SoLuong" /><p id="sl_@ct.ID">@ct.SoLuong</p></td>
+                                <td ><input class="form-control" type="text" hidden="hidden" id="valdongia_@ct.ID" value="@ct.DonGia.Value" /><p id="dongia_@ct.ID">@((ct.DonGia.Value).ToString("N0"))</p></td>
+                                <td ><input class="form-control" type="number" size="5" hidden="hidden" id="valdiem_@ct.ID" value="@(ct.Diem.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))" /><p id="diem_@ct.ID">@((ct.Diem.Value).ToString("N2"))</p></td>
+                                <td ><input class="form-control" type="text" hidden="hidden" id="valml_@ct.ID" value="@ct.MayLanh" /><p style="width:100px" id="ml_@ct.ID">@ct.MayLanh</p></td>
+                                <td><input class="form-control" type="text" hidden="hidden" id="valcpdv_@ct.ID" value="@(ct.CPDauVao.HasValue?ct.CPDauVao.Value:0)" /><p id="cpdv_@ct.ID">@(ct.CPDauVao.HasValue ? ct.CPDauVao.Value.ToString("N0") : "")</p></td>
+                                <td ><input class="form-control" type="text" hidden="hidden" id="valgc_@ct.ID" value="@ct.GhiChu" /><p id="gc_@ct.ID">@ct.GhiChu</p></td>
+                                <td >
+                                    <button class="btn chinhsuact btn-info" data-toggle="tooltip" title="Chỉnh sửa" data-id="@ct.ID" data-stt="@idyc" data-kh="@idkh">
+                                        <i id="icon_@ct.ID" class="fas fa-pencil-alt"></i>
+                                    </button>
+                                </td>
+                                @if (ViewBag.QLNL == true)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td><a data-id="@ct.ID" data-idbbnt="@item.ID" class="xoact btn"><i class="fas fa-times"></i></a></td>
+                                }
+                            </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+
+<!-- /.container-fluid -->
+<div class="modal fade dsKTV ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Các KTV phụ trách </h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <p>
+                            <input hidden="@ViewBag.Hidden" autocomplete="off" list="dataKTV" class="form-control col-md-6" style="float:left" id="IDKTV" type="text" placeholder="Mã KTV" />
+                            <datalist id="dataKTV">
+                                @if (dsKTV.Count() > 0)
+                                {
+                                    foreach (ASP_MVC.EF.NhanVien item in dsKTV)
+                                    {
+                                        <option value="@item.ID. @item.TenKTV"></option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option>Không có dữ liệu</option>
+                                }
+
+                            </datalist>
+                            <input hidden="@ViewBag.Hidden" class="form-control col-md-3" style="float:left; margin-left:10px" id="Diem" type="number" name="diem" placeholder="Điểm" />
+                            <button hidden="@ViewBag.Hidden" class="btn btn-primary addKTV" style="clear:both; margin-left:10px">Thêm</button>
+                        <p></p>
+                        <input hidden="@ViewBag.Hidden" class="form-control col-md-12" id="DanhGia" name="danhgia" placeholder="Đánh giá" />
+                        <input type="hidden" id="hidID" value="0" />
+
+
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên KTV</th>
+                                        <th>Điểm</th>
+                                        <th>Đánh giá</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template" type="x-tmpl-mustache">
+    <tr id="rowktv_{{ID}}">
+        <td>{{TenKTV}}</td>
+        <td>{{Diem}}</td>
+        <td>{{DanhGia}}</td>
+        <td><a class="btn btn-circle xoaktv" data-id="{{ID}}">X</a></td>
+    </tr>
+</script>
+
+<div class="modal fade dsPNL">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">PNL - @kh.HoTen - @kh.SDT</h4>
+                    @if (ctbbnt.Count() > 0 || phieuxuatvt.Count() > 0)
+                    {
+                        @Html.ActionLink("Xuất PNL", "DownloadExcel", "BienBanNghiemThu", new { idyc = idyc }, new { @class = "btn btn-success", @style = "margin-left:10px;" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Xuất PNL", "DownloadExcel", "BienBanNghiemThu", new { idyc = idyc }, new { @class = "btn btn-success disabled", @style = "margin-left:10px;" })
+                    }
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                        <b>
+                            <label style="color:blue;font-size:18px">Biên bản nghiệm thu</label>
+                            <input class="btn btn-danger btn-sm" disabled id="lblTongTienBBNT" style="float:right" />
+                        </b>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên dịch vụ/sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn giá</th>
+                                        @*<th>Điểm</th>*@
+                                        <th>Các mã máy</th>
+                                        <th>Giá đầu vào</th>
+                                        <th>Ghi chú</th>
+                                        <th>Ngày phục vụ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_bodyCPBBNT"></tbody>
+                            </table>
+                        </div>
+                        <hr />
+                        <b><label style="color:blue;font-size:18px">Chi phí xuất kho</label>
+                           <input class="btn btn-danger btn-sm" disabled id="lblTongTienCPXK" style="float:right" />
+                        </b>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Vật tư</th>
+                                        <th>Slg lấy</th>
+                                        <th>Slg thực tế</th>
+                                        <th>Giá bán</th>
+                                        <th>Thành tiền</th>
+                                        <th>Tên KTV</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_bodyCP1"></tbody>
+                            </table>
+                        </div>
+                        <hr />
+                        <b><label style="color:red;font-size:18px">Chi phí khác</label>
+                           <input class="btn btn-danger btn-sm" disabled id="lblTongTienCPKhac" style="float:right" />
+                        </b>
+                        <div>
+                            <input class="form-control col-md-2" style="float:left" id="valTenCP" type="text" placeholder="Tên chi phí" />
+                            <input class="form-control col-md-1" style="float:left; margin-left:10px" id="valsoluong" type="number" name="valsoluong" placeholder="Slg" />
+                            <input style="float:left; margin-left:10px" class="form-control col-md-2" id="valgiadauvao" type="number" name="valgiadauvao" placeholder="Giá đầu vào" />
+                            <input style="float:left; margin-left:10px" class="form-control col-md-2" id="valdongia" type="number" name="valdongia" placeholder="Giá bán" />
+                            <input class="form-control col-md-3" style="float:left; margin-left:10px" id="valghichu" name="valghichu" placeholder="Ghi chú" />
+                            <button class="btn btn-primary themChiPhi" style="clear:both; margin-left:10px">Thêm</button>
+                        </div>
+                        <p></p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên chi phí</th>
+                                        <th>Slg</th>
+                                        <th>Giá đầu vào</th>
+                                        <th>Giá bán</th>
+                                        <th>Thành tiền</th>
+                                        <th>Ghi chú</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_bodyCP2"></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-templateCPBBNT" type="x-tmpl-mustache">
+    <tr id="rowcpbbnt_{{ID}}">
+        <td>{{TenDVSP}}</td>
+        <td>{{SoLuong}}</td>
+        <td>{{DonGia}}</td>
+        <td>{{Ma}}</td>
+        <td>{{CPDauVao}}</td>
+        <td>{{GhiChu}}</td>
+        <td>{{NgayPV}}</td>
+    </tr>
+</script>
+
+<script id="data-templateCP1" type="x-tmpl-mustache">
+    <tr id="rowcp1_{{ID}}">
+        <td>{{ID}}</td>
+        <td>{{TenVatTu}}</td>
+        <td>{{SoLuongLay}}</td>
+        <td>{{SoLuong}}</td>
+        <td>{{DonGia}}</td>
+        <td>{{ThanhTien}}</td>
+        <td>{{TenKTV}}</td>
+    </tr>
+</script>
+
+<script id="data-templateCP2" type="x-tmpl-mustache">
+    <tr id="rowcp2_{{ID}}">
+        <td>{{TenChiPhi}}</td>
+        <td>{{SoLuong}}</td>
+        <td>{{GiaDauVao}}</td>
+        <td>{{DonGia}}</td>
+        <td>{{ThanhTien}}</td>
+        <td>{{GhiChu}}</td>
+        <td><a class="btn btn-circle xoacp2" @*hidden="@ViewBag.Hidden"*@ data-id="{{ID}}" data-idyc="@idyc">X</a></td>
+    </tr>
+</script>

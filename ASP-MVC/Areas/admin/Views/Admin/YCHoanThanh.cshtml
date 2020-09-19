@@ -1,0 +1,213 @@
+﻿@model IEnumerable<ASP_MVC.EF.YeuCauPhucVu>
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var ycct = (IEnumerable<ASP_MVC.EF.YeuCauPhucVu>)ViewBag.YCCT;
+}
+@section JsFooter{
+    @*<script src="~/Assets/Admin/js/plugin/jquery.twbsPagination.min.js"></script>*@
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+    <script src="~/Assets/Admin/js/controllers/YeuCauPhucVuController.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+
+    #dataTable1 > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<div style="margin-left:30px">
+    @Html.ActionLink("Trở về", "Index", null, new { @class = "btn btn-success " })
+
+
+</div>
+<hr />
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 h3 mb-2 text-gray-800">
+            <p style="float:left">Yêu cầu bảo trì/sửa chữa</p>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" value="0" checked />
+                            <label>Ngày hoàn thành</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Yêu cầu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Tên khách hàng</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Số điện thoại</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox6" class="form-check-input" checked />
+                            <label>Địa chỉ phục vụ</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox7" class="form-check-input" checked />
+                            <label>Ngày lập phiếu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox8" class="form-check-input" checked />
+                            <label>Ngày bắt đầu</label>
+                        </span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-sm" style="display: block; white-space: nowrap;" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Ngày hoàn thành</th>
+                            <th>Yêu cầu</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ phục vụ</th>
+                            @*<th>Loại</th>*@
+                            <th>Ngày lập</th>
+                            <th>Ngày bắt đầu</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @*<tfoot>
+                            <tr>
+                                <th>Tài khoản</th>
+                                <th>Họ tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Tùy chỉnh</th>
+                            </tr>
+                        </tfoot>*@
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID">
+                                <td width="5%">
+                                    <a style="color:white" class="btn btn-success btn-sm">Hoàn thành</a>
+                                </td>
+                                <td width="5%">@(item.NgayHoanThanh.HasValue ? item.NgayHoanThanh.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td width="20%">@item.YeuCau</td>
+                                <td width="10%">@item.KhachHang.HoTen</td>
+                                <td width="10%">@item.KhachHang.SDT</td>
+                                <td width="10%">@item.DiaChiPhucVu</td>
+                                <td width="5%">@(item.NgayLap.HasValue ? item.NgayLap.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td width="5%">@(item.NgayBatDau.HasValue ? item.NgayBatDau.Value.ToString("dd/MM/yyyy") : "")</td>
+
+                                <td width="5%">
+                                    <button class="btn bbnt btn-primary btn-sm" title="BBNT" data-id="@item.ID" data-idkh="@item.IDKhachHang">
+                                        <i class="fas fa-clone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 h3 mb-2 text-gray-800">
+            <p style="float:left">Yêu cầu thuê máy lạnh</p>
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" style="display: block; white-space: nowrap;" id="dataTable1" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Ngày hoàn thành</th>
+                            <th>Yêu cầu</th>
+                            <th>Tên khách hàng</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ phục vụ</th>
+                            @*<th>Loại</th>*@
+                            <th>Ngày lập</th>
+                            <th>Ngày bắt đầu</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @*<tfoot>
+                            <tr>
+                                <th>Tài khoản</th>
+                                <th>Họ tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Tùy chỉnh</th>
+                            </tr>
+                        </tfoot>*@
+                    <tbody>
+                        @foreach (var item in ycct)
+                        {
+                            <tr id="row_@item.ID">
+                                <td>
+                                    <a style="color:white" class="btn btn-success btn-sm ">Hoàn thành</a>
+
+                                </td>
+                                <td>@(item.NgayHoanThanh.HasValue ? item.NgayHoanThanh.Value.ToString("dd/MM/yyyy") : "null")</td>
+                                <td>@item.YeuCau</td>
+                                <td>@item.KhachHang.HoTen</td>
+                                <td>@item.KhachHang.SDT</td>
+                                <td>@item.DiaChiPhucVu</td>
+
+                                <td>@(item.NgayLap.HasValue ? item.NgayLap.Value.ToString("dd/MM/yyyy") : "null")</td>
+                                <td>@(item.NgayBatDau.HasValue ? item.NgayBatDau.Value.ToString("dd/MM/yyyy") : "null")</td>
+
+                                <td>
+                                    <button class="btn bbnt btn-primary btn-sm " data-id="@item.ID" data-idkh="@item.IDKhachHang">
+                                        <i class="fas fa-clone"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

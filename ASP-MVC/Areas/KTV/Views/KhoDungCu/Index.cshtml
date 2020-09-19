@@ -1,0 +1,196 @@
+﻿@model PagedList.IPagedList<ASP_MVC.EF.PhieuXuatKho>
+@using PagedList.Mvc
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<link href="~/Assets/MyCss/responsive.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/KTV/Views/Shared/_Layout.cshtml";
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/plugin/mustache.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="~/Assets/Admin/js/controllers/KTV.js"></script>
+    <script src="~/Assets/Admin/js/controllers/KTV_MuonDungCu.js"></script>
+}
+<!-- Begin Page Content -->
+<hr />
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Phiếu mượn dụng cụ</h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                <a class="btn btn-primary openModal" href="#" data-toggle="modal" data-target=".dsDungCuTrongKho">+ Lập phiếu mượn</a>
+            </div>
+            @using (Html.BeginForm("Index", "KhoDungCu", FormMethod.Get))
+            {
+                <p id="responsive1">
+                    <input class="form-control col-md-9" style="float:left" name="searchString" placeholder="Mã phiếu/Ngày xuất" />
+                    <button style="margin-left:5px" class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                </p>
+            }
+
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu xuất</th>
+                            <th>Tên kĩ thuật viên</th>
+                            <th>Ngày lập</th>
+                            <th>Ngày trả</th>
+                            <th>Kiểm duyệt</th>
+                            <th>Tình trạng</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID" data-id="@item.ID">
+                                <td>@item.ID</td>
+                                <td><input type="text" size="25" id="tennv_@item.ID" data-id="@item.ID" data-idnv="@item.IDKTV" class="form-control updatePX" value="@item.NhanVien.TenKTV" disabled /><input id="valKTV_@item.ID" hidden value="@item.IDKTV" /></td>
+                                <td>@item.NgayXuat.Value.ToString("HH:mm, dd/MM/yyyy")</td>
+                                <td>
+                                    @(item.NgayTra.HasValue ? item.NgayTra.Value.ToString("HH:mm, dd/MM/yyyy") : "null")
+                                </td>
+                                @if (item.KiemDuyet == true)
+                                {
+                                    <td>Đã xác nhận</td>
+                                }
+                                else
+                                {
+                                    <td>Đang chờ</td>
+                                }
+                                @if (item.Status == 1)
+                                {
+                                    <td align="center"><button title="Đã trả"  class="btn btn-success btnStatus"><i class="fas fa-check-square"></i></button></td>
+                                }
+
+                                else
+                                {
+                                    <td align="center"><button title="Chưa trả" class="btn btn-danger btnStatus"><i class="fas fa-minus-square"></i></button></td>
+                                }
+                                <td>
+                                    <a class="btn btn-success XemCT" data-id="@item.ID" data-toggle="modal" data-target=".CTPhieu" title="Xem chi tiết" href="#">
+                                        <i class="fas fa-list"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div style="float:right">@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.search }))</div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- /.container-fluid -->
+<div class="modal fade CTPhieu">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Chi tiết phiếu mượn dụng cụ</h4>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên dụng cụ</th>
+                                        <th>Ngày mượn</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body3"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template3" type="x-tmpl-mustache">
+    <tr>
+        <td>{{TenVatDung}}</td>
+        <td>
+            {{NgayMuon}}
+        </td>
+    </tr>
+</script>
+
+<div class="modal fade dsDungCuTrongKho">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="modal-header">
+                    <h4 class="h4 mb-2 text-gray-800">Chọn dụng cụ cần mượn</h4>
+
+
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+
+                    <div class="card-body">
+                        <div>
+                            <p style="float:right;width:200px">
+                                <input class="form-control" id="searchrealtime" name="searchString" placeholder="Tìm theo tên dụng cụ..." />
+                            </p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm" width="100%" cellspacing="0">
+
+                                <thead>
+                                    <tr>
+                                        <th>Tên dụng cụ</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="abc" id="table_body2"></tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <a class="btn btn-danger btnXacNhan" href="#" style="float:right">Xác nhận mượn</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="data-template2" type="x-tmpl-mustache">
+    <tr id="rowvd_{{ID}}">
+        <td>{{TenVatDung}}</td>
+        <td>
+            <a class="btn btn-info btnchonVatDung" href="#" id="btnChon_{{ID}}" data-id="{{ID}}">
+                <i id="iconchondungcu_{{ID}}" class="fas fa-check-square"></i>
+            </a>
+        </td>
+    </tr>
+</script>

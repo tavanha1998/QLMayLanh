@@ -1,0 +1,166 @@
+﻿@model IEnumerable<ASP_MVC.EF.MayLanh>
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+    var kh = (ASP_MVC.EF.KhachHang)ViewBag.KH;
+}
+
+@section JsFooter{
+    <script src="~/Assets/Admin/js/controllers/MayPhucVuController.js"></script>
+    <script src="~/Assets/Admin/js/controllers/HienThiCol.js"></script>
+}
+
+<style type="text/css">
+    #dataTable > tbody > tr > td {
+        height: 20px;
+        vertical-align: middle;
+        padding: 0 10px 0 10px;
+        border-top: 0px;
+    }
+</style>
+
+<div>
+    @using (Html.BeginForm("Import", "MayPhucVu", new { idkh = kh.ID }, FormMethod.Post, new { style = "float:right; margin-right:25px", enctype = "multipart/form-data" }))
+    {
+        @Html.Raw(ViewBag.Error)
+        <input type="submit" value="Import" class="btn btn-primary" style="float:right" />
+        <input type="file" name="UploadedFile" />
+    }
+</div>
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Danh sách máy - @kh.HoTen </h1>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div style="float:left">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    @Html.ActionLink("+ Thêm mới", "Create", new { idkh = kh.ID }, new { @class = "btn btn-success btn-sm" })
+                    @Html.ActionLink("Trở về", "Index", "KhachHang", null, new { @class = "btn btn-primary btn-sm" })
+                </h6>
+            </div>
+            <div class="btn-group btn-group-sm" style="float:right">
+                <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-cog"> Hiển thị</i>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox1" class="form-check-input" value="0" checked />
+                            <label>Mã máy</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox2" class="form-check-input" checked />
+                            <label>Tên máy</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox3" class="form-check-input" checked />
+                            <label>Model - Nhãn hiệu</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox4" class="form-check-input" checked />
+                            <label>Công suất</label>
+                        </span>
+                    </li>
+                    <li class="dropdown-item">
+                        <span>
+                            <input type="checkbox" id="checkbox5" class="form-check-input" checked />
+                            <label>Vị trí</label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã máy</th>
+                            <th>Tên máy</th>
+                            <th>Model - Nhãn hiệu</th>
+                            <th>Công suất</th>
+                            <th>Vị trí</th>
+                            <th>Tùy chỉnh</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @*<tfoot>
+                            <tr>
+                                <th>Tên máy</th>
+                                <th>Nhãn hiệu</th>
+                                <th>Công suất</th>
+                                <th>Số lần sửa chữa</th>
+                                <th>Số lần cho thuê</th>
+                                <th>Doanh số</th>
+                                <th>Tình trạng</th>
+                                <th>Tùy chỉnh</th>
+                            </tr>
+                        </tfoot>*@
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="updateMPV" data-id="@item.ID" data-idkh="@kh.ID" id="row_@item.ID">
+                                <td>@item.Ma</td>
+                                <td><input type="text" id="tenmay_@item.ID" class="form-control" value="@item.TenMay" hidden /><div id="tm_@item.ID">@item.TenMay</div></td>
+                                <td><input type="text" id="model_@item.ID" class="form-control" value="@item.Model" hidden /><div id="md_@item.ID">@item.Model</div></td>
+                                <td><input type="text" id="congsuat_@item.ID" class="form-control" value="@item.CongSuat" hidden /><div id="cs_@item.ID">@item.CongSuat</div></td>
+                                <td><input type="text" id="vitri_@item.ID" class="form-control" value="@item.ViTri" hidden /><div id="vt_@item.ID">@item.ViTri</div></td>
+                                <td>
+                                    <button type="button" data-toggle="tooltip" title="Lịch sử sửa chữa" data-idkh="@kh.ID" data-idmay="@item.ID" class="btn btn-primary btnXemLichSu btn-sm" style="color:white"><i class="fas fa-wrench"></i></button>
+                                    @*@Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.ID, idkh = item.IDKhachHang }, new { @class = "btn btn-info", @style = "color:white" })*@
+                                    <button type="button" data-toggle="tooltip" title="Chỉnh sửa" data-idmayphucvu="@item.ID" data-idkh="@kh.ID" class="btn btn-info btnEditMayPhucVu btn-sm" style="color:white"><i id="icon_@item.ID" class="fas fa-pencil-alt"></i></button>
+                                </td>
+                                @if (ViewBag.QLNL == true)
+                                {
+                                    <td></td>
+                                }
+                                else
+                                {
+                                    <td><a data-toggle="modal" data-target=".abc" data-id="@item.ID" class="Opendialog btn btn-sm"><i class="fas fa-times"></i></a></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+
+<div class="modal fade abc ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="container-fluid">
+                <div class="modal-header">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Xác nhận hủy máy?</h1>
+                    <button data-dismiss="modal" class="close"><span>&times;</span></button>
+                </div>
+                <!-- DataTales Example -->
+                <div class="modal-body">
+                    <button style="width:70px;" data-dismiss="modal" class="btn btn-primary xacnhan"><span>Có</span></button>
+                    <button style="margin-left: 250px; width:70px;" data-dismiss="modal" class="btn btn-primary huy"><span>Không</span></button>
+                    @*@Ajax.ActionLink("X", "Delete", new { id =  }, new AjaxOptions
+                        {
+                            Confirm = "Bản muốn xóa yêu cầu này?",
+                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                            HttpMethod = "Delete"
+                        },)*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
